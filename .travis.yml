@@ -1,0 +1,40 @@
+dist: trusty
+sudo: required
+language: go
+go:
+- 1.8.x
+go_import_path: github.com/terraform-providers/terraform-provider-uaa
+before_install:
+- openssl aes-256-cbc -K $encrypted_d032c4bea5a6_key -iv $encrypted_d032c4bea5a6_iv
+  -in .test_env/pcfdev.pem.enc -out .test_env/pcfdev.pem -d
+- chmod 0600 .test_env/pcfdev.pem
+install:
+- sudo apt-get install jq
+- pip install --upgrade --user awscli
+- wget https://releases.hashicorp.com/vagrant/1.9.7/vagrant_1.9.7_x86_64.deb
+- sudo dpkg -i vagrant_1.9.7_x86_64.deb
+- rm -f vagrant_1.9.7_x86_64.deb
+- vagrant plugin install vagrant-aws
+- bash scripts/gogetcookie.sh
+- go get github.com/kardianos/govendor
+script:
+- travis_wait 120 scripts/build.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: UqAsAMQSWA/Ao8LS1pr7o6fJkz8Njhj5oFLqlgP6t+eomZi7WzQOjRJmq0QdN48/lImGOF6GfFfPAL01n9ypbVpzGbFy+e3iePY9j2CObPyV1baCGwEtStuUdiQZE+JST3hGTMBA+tDBzBGPQiNOj2FGYh3FhxrEnCPhZBY6Q/1ZBM2A2hF4XsKJpPqvf6dyOExavDc3twmuoaku29LlFBSCfVlFNnEvQ3A/SGdN9Egyex+O9ZbUaH7FZUh+Buj7S3EMFgDCb6YsKnqAEYK/3CvQ41TC+ZlmOh4d/fpNJG3kL2/xnpykGfCQzYtfX2JOKvPfjMGEIT+wKDPyoyECLXa6TseICfw7qC4696TeVf4+3hvWasmIQd1wcqXcT56XQ+bdRvP6A886X9OZlDcyRFoTdh9cVlr9paOeqgGRThZ9zb7LZpKZ85GhDvgotnmJxQfFFCGPmpgtnSChNsmfhmdsmRHZ2WuTJhbuEFMwtIp7Qsqo6Q1cDyVaFpDrAcrJFuSIv3XzZMkXP+BpqvH27kxySBC8lC/WnIRrKV/zz+G29CbrTpnH9G8Fp6dBMZXBFk4o2PKUYRu4bGcBoAdrlLma9MzB4W7T1uB/SGfWaKCFGygT8UvPpqbr+BxZ7mYKLS5XbnUNyMsN9URi1/BCgFDZc1dt968cneSXKcQbHrE=
+  file:
+  - bin/terraform-provider-uaa_windows_amd64.exe
+  - bin/terraform-provider-uaa_linux_amd64
+  - bin/terraform-provider-uaa_darwin_amd64
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+    repo: mevansam/terraform-provider-uaa
+env:
+  global:
+  - AWS_DEFAULT_REGION=us-east-1
+  - secure: KU4oZ/oXrOZ09wo8CaAPY6wENiD5c8uzV2KVPII92Dro44vikUK6ZTfJ2fxPpoeR6gz5WeGZkqEqXzPTYnghGyiqqNh+9wTsUtb/mWp7gIBG6Xl7ak0sVDoragmobp8GvlQTj5JUrP+Kodpn9f8aw9wYI1/ZfrJZO+15vp/PVEf5+bGFzEvqALkd6o5oT1FCjlgM0TPORDabm6Nfsl151/C3RimFO4gFlUVDLLHHFs8ZPmVphWE0t7sxtf+Ocs5D31JFrwsSDrWp8CkPeUiYn6lVGJ5S0OQAFoUzhJk8HrKLdfJ2IOK/07vnBwjK6NGkyu0rl3hXifG2n843zZLYMi2O+AGxqsN+mkNdWobR8VYJYnT/K88oLYexqb/htYIOs3T9FZ+/BFN4LA836iTEEmz0JO7IVzcneIVxmp2ft6X1go0lAQxRil2SSKAF1Bfs+GRKdibZbFAn3rdgl23APe/smn38FEsEWk6mDh5dvA6JqbzLPzVGoUWQBUJIQKDtboCghTIFlEJK69flx6PV85Nu9DZw+AW/oTrRhYZBWfZIeOAoV6tY0J9bCDBfLj1vyRkGqbGfTCQda3/S1OVJ+YFgiWqlaOoXbT/jgDL1fjMeT4MRS/fRFjnAXzjsbUIOwLDPR0GqRXfeqqPqX6g/mwpeWusVu6Dnb07BNDck9DU=
+  - secure: RqkELJeE0fyIpICJuZiw45sCwtheg/gcS07/inzirFrLq4WvSnvNihKQUx832pA/YJZbRaNg+qpH1LCy5nRFDRlWC6Hj80kBwzetEw+Jphwr88rm1Yh4b2O+bRbM0azngW692i4pznRIg2AgIVg3TSP46PIv6wkAPbGu1ntQtWDfzStkBpRGuZOvZfXpESb2XGIIDgqcpVnQhEEZBBSfwXVpxAm9BrxiYoZyQcxhZiZrY6+1kdZeQmzArxoKClg+52PNHkK7h0Xk34nsNueo86kI0B6j/3LvL+A4S1z+OCFs7wzHI1lvXu8ddkFBMSp0UHCKOU2fOOB9W35X1l4zTph2GR22seL/pA/zEzsXvXU/xdszo6zqk6RzbbYF6CBp+ebF221YUqdRoGUkqf67+5HrNnhy2Yij3FRhSfRQdRT/+3Iv/TCZhzlYiKHKPT5j3wHBluBYSe/WCBOieKQ7EEA/OHCbNrK7V7eyTpkPVlAcQl9V6E5aqvsb0rYNzTWJpMo2KNt7Q36HRQEI0OOdzvkhoKdsyKwMqcv8WGycWrOBs3kpQVwRIHF0YXWwhfuJdXY2mclqlU/UczPetbN+2DcgRJMnPfyU7BmvirKKvdB3rvPjLCCFCP156/aSt5XQif0hPwhq3zPtfZwC603+zlLwoK/3ebwc9okgWASep9c=
+  - secure: B8mfM+KfQwyDETVEf8ufnOCNI2eMi0T4FbK5Pizz113nzpe0H4LMGaqX8acL+W6A7frQGs+H5Ur//20SWlDTeU2qA7WT6+dMNR8dPQP0CfsABjGndpOZIOSAXGkaOXYM9vUCP3teW1u5gdUuIlSYQqmRIWemBP9pdOTlNYlknAmFJ7ATk0a6mYusDhRvQcsiUpJNlK3nrzql+NPDRtCOAxIL37TZezwneQ3EuX+2dxFM6eTpLznfhyWqTp4PQPFJAwd+DSABmsI42w0005GLFF/ZPoMbkM/Wf6FU6g0x226BQ5zj4pem26whwjl0O0kk031uTqnZM1AqSTSngGhVOt6OPvF71jUCFXA83QcNjLfPojHM6B8CLnHY/1xxBUj3Uc/viC2FSuMY0Zbj+F14GcCit5WZz9v3VAS67dkZqa5g2CvbngcA1tcg6Q1OGe9yVhKXNplX2pjA00bdWcoEIjmY1h0xbU03DYeSzRP9df4wzODVGlB8QoTEBiTjp3NA+iajiGB+OEMMcqidAPyWcm1XSZpBUoU5GjOIkbZEGfKGV8WsQ1Ra8MuSsruOF8ycZqyElB/hH8L6yCuyXr/pcJGrDaZyZXQdbUaX4zQewn9J0tGPXvG+t2cbL6m9P4OUO1HvEp8voFEIhkxcU4AoSmWn7z/o4nrvGJ30/L03lTM=
