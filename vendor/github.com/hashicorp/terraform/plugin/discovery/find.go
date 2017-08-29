@@ -59,6 +59,7 @@ func findPluginPaths(kind string, dirs []string) []string {
 			fullName := item.Name()
 
 			if !strings.HasPrefix(fullName, prefix) {
+				log.Printf("[DEBUG] skipping %q, not a %s", fullName, kind)
 				continue
 			}
 
@@ -126,12 +127,6 @@ func ResolvePluginPaths(paths []string) PluginMetaSet {
 		if baseName == "" {
 			// Should never happen with reasonable input
 			continue
-		}
-
-		// Trim the .exe suffix used on Windows before we start wrangling
-		// the remainder of the path.
-		if strings.HasSuffix(baseName, ".exe") {
-			baseName = baseName[:len(baseName)-4]
 		}
 
 		parts := strings.SplitN(baseName, "_v", 2)
