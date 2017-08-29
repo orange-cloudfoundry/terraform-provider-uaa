@@ -1,18 +1,18 @@
 #!/bin/bash
 
+set -e
+
 if [[ -z "$TRAVIS_TAG" ]] ; then
     echo "Git commit does not have a release tag so acceptance tests will not run."
     
     make build
-    exit 0
+    exit
 fi
 
 function pcfdev_instance_detail() {
     aws ec2 describe-instances \
         | jq '.Reservations[] | .Instances[] | select(.State.Name != "terminated") | select(.Tags[] | .Value == "pcfdev")'
 }
-
-set -e
 
 PCFDEV_INSTANCE_DETAIL=$(pcfdev_instance_detail)
 if [[ -z $PCFDEV_INSTANCE_DETAIL ]]; then
