@@ -48,12 +48,11 @@ export GOROOT=/usr/local/go
 export GOPATH=/tmp/gopath
 cd /tmp/gopath/src/github.com/terraform-providers/terraform-provider-uaa
 
-export CF_USER=admin
-export CF_PASSWORD=admin
-export CF_SKIP_SSL_VALIDATION=true
-export CF_UAA_CLIENT_ID=admin
-export CF_API_URL=https://api.$PRIVATE_IP.xip.io
-export CF_UAA_CLIENT_SECRET=admin-client-secret
+export UAA_LOGIN_URL=https://login.$PRIVATE_IP.xip.io
+export UAA_AUTH_URL=https://uaa.$PRIVATE_IP.xip.io
+export UAA_CLIENT_SECRET=admin-client-secret
+export UAA_CLIENT_ID=admin
+export UAA_SKIP_SSL_VALIDATION=true
 
 make testacc
 

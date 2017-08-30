@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 SECONDS=0
 INGRESS_ALLOWED_IP=$(curl -s http://whatismyip.akamai.com/)
@@ -150,4 +150,4 @@ travis encrypt-file .test_env/pcfdev.pem .test_env/pcfdev.pem.enc --add --force
 git commit -m "updated pcfdev ssh key" .test_env/pcfdev.pem.enc
 git push
 
-set +e
+set +xe
