@@ -24,8 +24,9 @@ type Session struct {
 	refresher  coreconfig.APIConfigRefresher
 	uaaGateway net.Gateway
 
-	authManager *AuthManager
-	userManager *UserManager
+	authManager   *AuthManager
+	userManager   *UserManager
+	clientManager *ClientManager
 
 	// Used for direct endpoint calls
 	httpClient *http.Client
@@ -79,15 +80,26 @@ func NewSession(
 		return nil, err
 	}
 
+	s.clientManager, err = newClientManager(s.config, s.uaaGateway, s.Log)
+	if err != nil {
+		return nil, err
+	}
+
 	if s.userManager.clientToken, err = s.authManager.getClientToken(uaaClientID, uaaClientSecret); err == nil {
 		err = s.userManager.loadGroups()
 	}
+
 	return
 }
 
 // UserManager -
 func (s *Session) UserManager() *UserManager {
 	return s.userManager
+}
+
+// UserManager -
+func (s *Session) ClientManager() *ClientManager {
+	return s.clientManager
 }
 
 // noopPersistor - No Op Persistor for CF CLI session
