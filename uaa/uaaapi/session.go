@@ -85,7 +85,7 @@ func NewSession(
 		return nil, err
 	}
 
-	if s.userManager.clientToken, err = s.authManager.getClientToken(uaaClientID, uaaClientSecret); err == nil {
+	if s.userManager.clientToken, err = s.authManager.GetClientToken(uaaClientID, uaaClientSecret); err == nil {
 		err = s.userManager.loadGroups()
 	}
 
@@ -100,6 +100,11 @@ func (s *Session) UserManager() *UserManager {
 // UserManager -
 func (s *Session) ClientManager() *ClientManager {
 	return s.clientManager
+}
+
+// AuthManager -
+func (s *Session) AuthManager() *AuthManager {
+	return s.authManager
 }
 
 // noopPersistor - No Op Persistor for CF CLI session

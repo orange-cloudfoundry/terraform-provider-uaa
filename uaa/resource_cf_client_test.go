@@ -7,10 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
-	"net/http"
-	"net/url"
 	"regexp"
-	"strings"
 	"testing"
 )
 
@@ -136,25 +133,9 @@ func testAccCheckValidSecret(resource, secret string) resource.TestCheckFunc {
 		}
 
 		id := rs.Primary.ID
-		um := session.ClientManager()
-
-		data := url.Values{
-			"client_id":     {id},
-			"client_secret": {secret},
-			"grant_type":    {"client_credentials"},
-			"token_format":  {"opaque"},
-			"response_type": {"token"},
-		}
-		req, err := http.NewRequest("POST",
-			fmt.Sprintf("%s/oauth/token", um.UaaEndPoint()),
-			strings.NewReader(data.Encode()))
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.Header.Set("Accept", "application/json")
-
-		client := &http.Client{}
-		res, err := client.Do(req)
-		if err != nil || res.StatusCode != 200 {
-			return fmt.Errorf("client '%s' has invalid secret", id)
+		auth := session.AuthManager()
+		if _, err := auth.GetClientToken(id, secret); err != nil {
+			return err
 		}
 		return nil
 	}
