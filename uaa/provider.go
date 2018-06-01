@@ -43,11 +43,13 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"uaa_user": dataSourceUser(),
+			"uaa_user":   dataSourceUser(),
+			"uaa_client": dataSourceClient(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"uaa_user": resourceUser(),
+			"uaa_user":   resourceUser(),
+			"uaa_client": resourceClient(),
 		},
 
 		ConfigureFunc: providerConfigure,

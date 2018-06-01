@@ -148,8 +148,8 @@ func (tm *AuthManager) Authenticate(credentials map[string]string) error {
 	return nil
 }
 
-// getClientToken -
-func (tm *AuthManager) getClientToken(clientID, clientSecret string) (clientToken string, err error) {
+// GetClientToken -
+func (tm *AuthManager) GetClientToken(clientID, clientSecret string) (clientToken string, err error) {
 
 	data := url.Values{
 		"grant_type": {"client_credentials"},

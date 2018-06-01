@@ -78,6 +78,26 @@ func getChangedValueIntList(key string, updated *bool, d *schema.ResourceData) *
 	return nil
 }
 
+// getChangedValueStringList
+func getChangedValueStringList(key string, updated *bool, d *schema.ResourceData) *[]string {
+	var a []interface{}
+
+	if d.HasChange(key) {
+		a = d.Get(key).(*schema.Set).List()
+		*updated = *updated || true
+	} else if v, ok := d.GetOk(key); ok {
+		a = v.(*schema.Set).List()
+	}
+	if a != nil {
+		aa := []string{}
+		for _, vv := range a {
+			aa = append(aa, vv.(string))
+		}
+		return &aa
+	}
+	return nil
+}
+
 // getChangedValueMap -
 func getChangedValueMap(key string, updated *bool, d *schema.ResourceData) *map[string]interface{} {
 
