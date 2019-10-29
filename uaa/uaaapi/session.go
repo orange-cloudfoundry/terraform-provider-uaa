@@ -2,10 +2,8 @@ package uaaapi
 
 import (
 	"crypto/rand"
-	"crypto/tls"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -21,15 +19,11 @@ type Session struct {
 	Log *Logger
 
 	config     coreconfig.Repository
-	refresher  coreconfig.APIConfigRefresher
 	uaaGateway net.Gateway
 
 	authManager   *AuthManager
 	userManager   *UserManager
 	clientManager *ClientManager
-
-	// Used for direct endpoint calls
-	httpClient *http.Client
 }
 
 // uaaErrorResponse -
@@ -44,13 +38,7 @@ func NewSession(
 	uaaClientID, uaaClientSecret, caCert string,
 	skipSslValidation bool) (s *Session, err error) {
 
-	s = &Session{
-		httpClient: &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: skipSslValidation},
-			},
-		},
-	}
+	s = &Session{}
 
 	envDialTimeout := os.Getenv("UAA_DIAL_TIMEOUT")
 
@@ -73,7 +61,7 @@ func NewSession(
 
 	s.uaaGateway = net.NewUAAGateway(s.config, s.Log.UI, s.Log.TracePrinter, envDialTimeout)
 	s.authManager = NewAuthManager(s.uaaGateway, s.config, net.NewRequestDumper(s.Log.TracePrinter))
-	s.uaaGateway.SetTokenRefresher(s.authManager)
+	//s.uaaGateway.SetTokenRefresher(s.authManager)
 
 	s.userManager, err = newUserManager(s.config, s.uaaGateway, s.Log)
 	if err != nil {

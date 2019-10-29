@@ -5,11 +5,11 @@ type RouteInDifferentSpaceError struct {
 }
 
 func (e RouteInDifferentSpaceError) Error() string {
-	return "Route {{.Route}} has been registered to another space."
+	return "The app cannot be mapped to route {{.URL}} because the route exists in a different space."
 }
 
 func (e RouteInDifferentSpaceError) Translate(translate func(string, ...interface{}) string) string {
 	return translate(e.Error(), map[string]interface{}{
-		"Route": e.Route,
+		"URL": e.Route,
 	})
 }

@@ -177,8 +177,7 @@ func (tm *AuthManager) GetClientToken(clientID, clientSecret string) (clientToke
 }
 
 // RefreshAuthToken -
-func (tm *AuthManager) RefreshAuthToken() (string, error) {
-
+func (tm *AuthManager) RefreshToken() (string, error) {
 	data := url.Values{
 		"refresh_token": {tm.config.RefreshToken()},
 		"grant_type":    {"refresh_token"},

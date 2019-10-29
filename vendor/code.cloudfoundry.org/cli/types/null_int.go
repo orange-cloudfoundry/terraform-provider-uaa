@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -12,8 +13,8 @@ type NullInt struct {
 	Value int
 }
 
-// ParseFlagValue is used to parse a user provided flag argument.
-func (n *NullInt) ParseFlagValue(val string) error {
+// ParseStringValue is used to parse a user provided flag argument.
+func (n *NullInt) ParseStringValue(val string) error {
 	if val == "" {
 		return nil
 	}
@@ -27,6 +28,28 @@ func (n *NullInt) ParseFlagValue(val string) error {
 	n.IsSet = true
 
 	return nil
+}
+
+// IsValidValue returns an error if the input value is not an integer.
+func (n *NullInt) IsValidValue(val string) error {
+	_, err := strconv.Atoi(val)
+	return err
+}
+
+// ParseIntValue is used to parse a user provided *int argument.
+func (n *NullInt) ParseIntValue(val *int) {
+	if val == nil {
+		n.IsSet = false
+		n.Value = 0
+		return
+	}
+
+	n.Value = *val
+	n.IsSet = true
+}
+
+func (n *NullInt) UnmarshalFlag(val string) error {
+	return n.ParseStringValue(val)
 }
 
 func (n *NullInt) UnmarshalJSON(rawJSON []byte) error {
@@ -51,4 +74,11 @@ func (n *NullInt) UnmarshalJSON(rawJSON []byte) error {
 	n.IsSet = true
 
 	return nil
+}
+
+func (n NullInt) MarshalJSON() ([]byte, error) {
+	if n.IsSet {
+		return []byte(fmt.Sprint(n.Value)), nil
+	}
+	return []byte("null"), nil
 }

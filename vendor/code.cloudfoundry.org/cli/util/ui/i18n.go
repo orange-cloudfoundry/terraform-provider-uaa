@@ -7,14 +7,14 @@ import (
 	"strings"
 	"text/template"
 
+	"code.cloudfoundry.org/cli/i18n/resources"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/text/language"
-
-	"code.cloudfoundry.org/cli/cf/resources"
 )
 
 const (
 	// assetPath is the path of the translation file inside the asset loader.
-	assetPath = "cf/i18n/resources/%s.all.json"
+	assetPath = "resources/%s.all.json"
 	// chineseBase is the language code for Chinese.
 	chineseBase = "zh"
 	// defaultLocale is the default locale used when one is not configured.
@@ -117,7 +117,10 @@ func generateTranslationFunc(rawTranslation []byte) (TranslateFunc, error) {
 
 		var buffer bytes.Buffer
 		formattedTemplate := template.Must(template.New("Display Text").Parse(translated))
-		formattedTemplate.Execute(&buffer, keys)
+		err := formattedTemplate.Execute(&buffer, keys)
+		if err != nil {
+			log.WithField("translationID", translationID).Errorln("executing template:", err)
+		}
 
 		return buffer.String()
 	}, nil
@@ -127,7 +130,7 @@ func loadAssetFromResources(locale string) ([]byte, error) {
 	assetName := fmt.Sprintf(assetPath, locale)
 	assetBytes, err := resources.Asset(assetName)
 	if err != nil {
-		err = fmt.Errorf("Could not load asset '%s': %s", assetName, err.Error())
+		err = fmt.Errorf("could not load asset '%s': %s", assetName, err.Error())
 	}
 
 	return assetBytes, err
