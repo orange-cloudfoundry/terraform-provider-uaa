@@ -2,7 +2,7 @@ dist: bionic
 sudo: required
 language: go
 go:
-- 1.12.x
+- 1.14.x
 go_import_path: github.com/terraform-providers/terraform-provider-uaa
 script:
   - ./scripts/build.sh

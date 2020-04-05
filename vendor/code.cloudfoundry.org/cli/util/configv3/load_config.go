@@ -37,8 +37,18 @@ func (c *Config) loadPluginConfig() error {
 	return nil
 }
 
+func GetCFConfig() (*Config, error) {
+	cfConfig, configErr := LoadConfig()
+	if configErr != nil {
+		if _, ok := configErr.(translatableerror.EmptyConfigError); !ok {
+			return nil, configErr
+		}
+	}
+	return cfConfig, nil
+}
+
 // LoadConfig loads the config from the .cf/config.json and os.ENV. If the
-// config.json does not exists, it will use a default config in it's place.
+// config.json does not exists, it will use a default config in its place.
 // Takes in an optional FlagOverride, will only use the first one passed, that
 // can override the given flag values.
 //
@@ -62,7 +72,7 @@ func LoadConfig(flags ...FlagOverride) (*Config, error) {
 
 	config := Config{
 		ConfigFile: JSONConfig{
-			ConfigVersion: 3,
+			ConfigVersion: CurrentConfigVersion,
 			Target:        DefaultTarget,
 			ColorEnabled:  DefaultColorEnabled,
 			PluginRepositories: []PluginRepository{{
@@ -90,7 +100,9 @@ func LoadConfig(flags ...FlagOverride) (*Config, error) {
 			if err != nil {
 				return nil, err
 			}
-			config.ConfigFile = configFile
+			if configFile.ConfigVersion == CurrentConfigVersion {
+				config.ConfigFile = configFile
+			}
 		}
 	}
 
