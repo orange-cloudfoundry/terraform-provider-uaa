@@ -2,14 +2,14 @@ dist: bionic
 sudo: required
 language: go
 go:
-- 1.14.x
+- 1.15.x
 go_import_path: github.com/terraform-providers/terraform-provider-uaa
 script:
-  - ./scripts/build.sh
+- "./scripts/build.sh"
 deploy:
   provider: releases
   api_key:
-    secure: ZKZqAYvZBljCNwXGwBbuTYdUPKclTEH0TAzyqcD9NWAaJ6UeWKKo2lUal1gGEyPPy3WniM3Skwv/Py3RthnsLPmHyCdI8cmyL/krMwe2Vys65TU8ygYu008zl6C6XWQXVvOjfzwAotvvtfacZIzJ4R/y8f9AgXBmKeeLfaNj9QZqfuvVGSLUGWjwHnVVHONzFPQxTN/l42Tvjr5sQXn3jaDuQY6EVbg7t5XydnOak/NtK4D3T8C2/cv9/3oCKmxUT2xw87p39uQflVsIz0fDlMoNpwSFybAf7qFYE6fFmhuB/fPBAdZa/nWR80Uvwfkc89X8+Pp7CNF+ckZWrln3a+L1CCqHZdQSsMX22K8Wnz0Ks8uAdJt+eIrgWKbId56eKzPmX5OJkhBpzF1kHQV9k3od0/gXKu0ruin4TfMZrj2CD2Ij4H+MgieEbko9A1NTN07KjDA2F+A1De6Ovj2Ib6BsJwANlOBHZW4VCM4P1AAvRvBb0XSY8i87HpsqCoDEqNR2br9W1QMz8uQyx8wbTvhbf+Qwmj4S6ZceAqmwRk9SgF+612aZBJtDwfZpA7OruPGIDZ9TpEewBWzZEW/77qltB3mZYKkjyFQlGYrxa8dtx/AZGRV2Dnav/kkJEXjtmrtfQqY6/0Nv7MManpoBK98waRR+S/39WcxV89m5Ef0=
+    secure: CXHghG4KedGKLmjoBCjYfOJzWhchV9po76S7IhJAXphFwPaJj9hOUFu6Nl9AF1svj9KRC6wIpcaRVmQRN4jTYzixfZ4kz+pFn51RApR6dBhc/viPq+eaKP7OcnmoGv68g1qrSCi36Ae89Gg3fCZzGwp9tn4f/Dca7geAKvwClKD0FOfpkn98l4FVx4cO/6hzKh/B49WTPEi/UtBKl2LzFhmCPk0cn5mdmxmNssKjfD8GRT2LE1VTHS36t+gPjKJQv/ndB5Xj824akc0LA2+eTyM6cSvarKfm7MKzcj5046k3jNqTnaF9zwyHTQn4y3nh6/zRRO1iQ7OcA3FFyfPK2pA7mogHfAhIf6Sq6o7+0HMKXUlbNK7QjfFlCkwRVPq/gNvbHoZvwvdiq2GbF6eeBrOFbq86OVEQ86e85pzA8g3XXchA3+SSxEzEZistZ8ak/A5IdZ4zAThfzE+drCIO18xz2LNb44Jg8mQN113nWvgaptpZposHtrrFN/wxH1+urA51a14Bu1aRZW9PsecPHUy8sSJLDh+oY2J4LydAqCk3jizHhMpMItazt5hZIdvmfszZUM9bTMumb2hVbG639Dn/0tMOKyvnl+S3R+WlmEGPBfXAlNVFB4VjQ5LOqFueojYiGe+raT2e9Bsq0eJHVPXtf3HVGQec73dsMt/InAs=
   file:
     - bin/terraform-provider-uaa_windows_amd64.exe
     - bin/terraform-provider-uaa_linux_amd64
@@ -17,3 +17,4 @@ deploy:
   on:
     repo: orange-cloudfoundry/terraform-provider-uaa
     tags: true
+  skip_cleanup: 'true'
