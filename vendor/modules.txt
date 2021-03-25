@@ -42,7 +42,7 @@ code.cloudfoundry.org/cli/util/manifest
 code.cloudfoundry.org/cli/util/ui
 code.cloudfoundry.org/cli/util/v6manifestparser
 code.cloudfoundry.org/cli/version
-# code.cloudfoundry.org/cli-plugin-repo v0.0.0-20210111185146-187f1755eedc
+# code.cloudfoundry.org/cli-plugin-repo v0.0.0-20210301222310-48fc08756339
 ## explicit
 # code.cloudfoundry.org/diego-ssh v0.0.0-20200925211834-3baf7895829e
 ## explicit
@@ -52,16 +52,15 @@ code.cloudfoundry.org/cli/version
 ## explicit
 # code.cloudfoundry.org/gofileutils v0.0.0-20170111115228-4d0c80011a0f
 ## explicit
-# code.cloudfoundry.org/inigo v0.0.0-20201208175139-9dd761134693
+# code.cloudfoundry.org/inigo v0.0.0-20210227001522-aea72a82d460
 ## explicit
-# code.cloudfoundry.org/jsonry v1.1.2
+# code.cloudfoundry.org/jsonry v1.1.3
 ## explicit
 # code.cloudfoundry.org/lager v2.0.0+incompatible
 ## explicit
 # code.cloudfoundry.org/rfc5424 v0.0.0-20201103192249-000122071b78
 ## explicit
 # code.cloudfoundry.org/tlsconfig v0.0.0-20200131000646-bbe0f8da39b3
-## explicit
 code.cloudfoundry.org/tlsconfig
 # code.cloudfoundry.org/ykk v0.0.0-20170424192843-e4df4ce2fd4d
 ## explicit
@@ -75,12 +74,12 @@ github.com/SermoDigital/jose/jwt
 github.com/agext/levenshtein
 # github.com/apparentlymart/go-cidr v1.1.0
 github.com/apparentlymart/go-cidr/cidr
-# github.com/apparentlymart/go-textseg/v12 v12.0.0
-github.com/apparentlymart/go-textseg/v12/textseg
+# github.com/apparentlymart/go-textseg/v13 v13.0.0
+github.com/apparentlymart/go-textseg/v13/textseg
 # github.com/apparentlymart/go-versions v1.0.1
 github.com/apparentlymart/go-versions/versions
 github.com/apparentlymart/go-versions/versions/constraints
-# github.com/aws/aws-sdk-go v1.31.9
+# github.com/aws/aws-sdk-go v1.37.0
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -92,6 +91,7 @@ github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
 github.com/aws/aws-sdk-go/aws/credentials/processcreds
+github.com/aws/aws-sdk-go/aws/credentials/ssocreds
 github.com/aws/aws-sdk-go/aws/credentials/stscreds
 github.com/aws/aws-sdk-go/aws/csm
 github.com/aws/aws-sdk-go/aws/defaults
@@ -102,7 +102,9 @@ github.com/aws/aws-sdk-go/aws/session
 github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/internal/context
 github.com/aws/aws-sdk-go/internal/ini
-github.com/aws/aws-sdk-go/internal/s3err
+github.com/aws/aws-sdk-go/internal/s3shared
+github.com/aws/aws-sdk-go/internal/s3shared/arn
+github.com/aws/aws-sdk-go/internal/s3shared/s3err
 github.com/aws/aws-sdk-go/internal/sdkio
 github.com/aws/aws-sdk-go/internal/sdkmath
 github.com/aws/aws-sdk-go/internal/sdkrand
@@ -115,30 +117,32 @@ github.com/aws/aws-sdk-go/private/protocol
 github.com/aws/aws-sdk-go/private/protocol/eventstream
 github.com/aws/aws-sdk-go/private/protocol/eventstream/eventstreamapi
 github.com/aws/aws-sdk-go/private/protocol/json/jsonutil
+github.com/aws/aws-sdk-go/private/protocol/jsonrpc
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/aws/aws-sdk-go/private/protocol/rest
+github.com/aws/aws-sdk-go/private/protocol/restjson
 github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/service/s3
-github.com/aws/aws-sdk-go/service/s3/internal/arn
+github.com/aws/aws-sdk-go/service/sso
+github.com/aws/aws-sdk-go/service/sso/ssoiface
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
 github.com/bgentry/go-netrc/netrc
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/bmatcuk/doublestar v1.1.5
+# github.com/bmatcuk/doublestar v1.3.4
 github.com/bmatcuk/doublestar
 # github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40
 ## explicit
 # github.com/charlievieth/fs v0.0.1
-## explicit
 github.com/charlievieth/fs
 # github.com/cloudfoundry/bosh-cli v6.4.1+incompatible
 ## explicit
 github.com/cloudfoundry/bosh-cli/director/template
-# github.com/cloudfoundry/bosh-utils v0.0.0-20210123100258-f3833792f535
+# github.com/cloudfoundry/bosh-utils v0.0.0-20210320100230-b112c198f4b7
 ## explicit
 github.com/cloudfoundry/bosh-utils/errors
 github.com/cloudfoundry/bosh-utils/logger
@@ -154,7 +158,7 @@ github.com/davecgh/go-spew/spew
 github.com/fatih/color
 # github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e
 github.com/golang/groupcache/lru
-# github.com/golang/protobuf v1.4.2
+# github.com/golang/protobuf v1.4.3
 github.com/golang/protobuf/internal/gengogrpc
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/protoc-gen-go
@@ -206,7 +210,7 @@ github.com/hashicorp/hcl/hcl/token
 github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/hashicorp/hcl/v2 v2.8.2
+# github.com/hashicorp/hcl/v2 v2.9.1
 github.com/hashicorp/hcl/v2
 github.com/hashicorp/hcl/v2/ext/customdecode
 github.com/hashicorp/hcl/v2/ext/dynblock
@@ -218,7 +222,7 @@ github.com/hashicorp/hcl/v2/hclparse
 github.com/hashicorp/hcl/v2/hclsyntax
 github.com/hashicorp/hcl/v2/hclwrite
 github.com/hashicorp/hcl/v2/json
-# github.com/hashicorp/terraform v0.14.5
+# github.com/hashicorp/terraform v0.14.9
 ## explicit
 github.com/hashicorp/terraform/addrs
 github.com/hashicorp/terraform/command/format
@@ -273,10 +277,10 @@ github.com/hashicorp/terraform-svchost/auth
 github.com/hashicorp/terraform-svchost/disco
 # github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d
 github.com/hashicorp/yamux
-# github.com/jessevdk/go-flags v1.4.0
+# github.com/jessevdk/go-flags v1.5.0
 ## explicit
 github.com/jessevdk/go-flags
-# github.com/jmespath/go-jmespath v0.3.0
+# github.com/jmespath/go-jmespath v0.4.0
 github.com/jmespath/go-jmespath
 # github.com/jstemmer/go-junit-report v0.9.1
 github.com/jstemmer/go-junit-report
@@ -312,7 +316,7 @@ github.com/mitchellh/go-wordwrap
 github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.1
 github.com/mitchellh/reflectwalk
-# github.com/moby/moby v20.10.2+incompatible
+# github.com/moby/moby v20.10.5+incompatible
 ## explicit
 # github.com/moby/term v0.0.0-20201216013528-df9cb8a40635
 ## explicit
@@ -325,8 +329,6 @@ github.com/sirupsen/logrus
 # github.com/spf13/afero v1.2.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
-# github.com/tedsuo/ifrit v0.0.0-20191009134036-9a97d0632f00
-## explicit
 # github.com/tedsuo/rata v1.0.0
 ## explicit
 # github.com/ulikunitz/xz v0.5.8
@@ -345,7 +347,7 @@ github.com/vmihailenco/msgpack/v4/codes
 github.com/vmihailenco/tagparser
 github.com/vmihailenco/tagparser/internal
 github.com/vmihailenco/tagparser/internal/parser
-# github.com/zclconf/go-cty v1.7.1
+# github.com/zclconf/go-cty v1.8.0
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
 github.com/zclconf/go-cty/cty/function
@@ -373,7 +375,7 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+# golang.org/x/crypto v0.0.0-20210317152858-513c2a44f670
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/cast5
@@ -399,7 +401,7 @@ golang.org/x/lint/golint
 golang.org/x/mod/module
 golang.org/x/mod/semver
 golang.org/x/mod/sumdb/dirhash
-# golang.org/x/net v0.0.0-20201021035429-f5854403a974
+# golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
 golang.org/x/net/http/httpguts
@@ -415,12 +417,15 @@ golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
+# golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.3.3
+# golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
+golang.org/x/term
+# golang.org/x/text v0.3.5
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/ianaindex
@@ -441,7 +446,7 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/tools v0.0.0-20201028111035-eafbe7b904eb
+# golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e
 golang.org/x/tools/cmd/goimports
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/gcexportdata
@@ -577,5 +582,5 @@ google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/pluginpb
 # gopkg.in/cheggaaa/pb.v1 v1.0.27
 gopkg.in/cheggaaa/pb.v1
-# gopkg.in/yaml.v2 v2.3.0
+# gopkg.in/yaml.v2 v2.4.0
 gopkg.in/yaml.v2
