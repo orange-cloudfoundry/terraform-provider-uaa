@@ -45,7 +45,7 @@ func NewSession(
 	debug, _ := strconv.ParseBool(os.Getenv("UAA_DEBUG"))
 	s.Log = NewLogger(debug, os.Getenv("UAA_TRACE"))
 
-	s.config = coreconfig.NewRepositoryFromPersistor(&noopPersistor{}, func(err error) {
+	s.config = coreconfig.NewRepositoryFromPersistor(newNoopPersistor(), func(err error) {
 		if err != nil {
 			s.Log.UI.Failed(err.Error())
 			os.Exit(1)

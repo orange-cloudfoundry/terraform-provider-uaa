@@ -226,24 +226,3 @@ func (tm *AuthManager) getAuthToken(clientID, clientSecret string, data url.Valu
 
 	return response, nil
 }
-
-type loginResource struct {
-	Prompts map[string][]string
-	Links   map[string]string
-}
-
-var knownAuthPromptTypes = map[string]coreconfig.AuthPromptType{
-	"text":     coreconfig.AuthPromptTypeText,
-	"password": coreconfig.AuthPromptTypePassword,
-}
-
-func (r *loginResource) parsePrompts() (prompts map[string]coreconfig.AuthPrompt) {
-	prompts = make(map[string]coreconfig.AuthPrompt)
-	for key, val := range r.Prompts {
-		prompts[key] = coreconfig.AuthPrompt{
-			Type:        knownAuthPromptTypes[val[0]],
-			DisplayName: val[1],
-		}
-	}
-	return
-}

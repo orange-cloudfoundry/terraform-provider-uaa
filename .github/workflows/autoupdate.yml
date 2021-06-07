@@ -8,6 +8,7 @@ on:
 jobs:
   auto-update:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout the head commit of the branch
       uses: actions/checkout@v2

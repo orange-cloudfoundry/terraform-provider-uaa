@@ -18,7 +18,6 @@ type UserManager struct {
 
 	config     coreconfig.Reader
 	uaaGateway net.Gateway
-	ccGateway  net.Gateway
 
 	clientToken string
 

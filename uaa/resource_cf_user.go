@@ -3,7 +3,7 @@ package uaa
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
@@ -193,7 +193,7 @@ func resourceUserDelete(d *schema.ResourceData, meta interface{}) error {
 
 	id := d.Id()
 	um := session.UserManager()
-	um.DeleteUser(id)
+	um.DeleteUser(id) //nolint error is authorized here to allow not existing to be deleted without error
 
 	return nil
 }

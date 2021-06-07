@@ -21,8 +21,10 @@ require (
 	github.com/cloudfoundry/bosh-utils v0.0.0-20210320100230-b112c198f4b7 // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
-	github.com/hashicorp/terraform v0.14.9
-	github.com/jessevdk/go-flags v1.5.0 // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.8.5 // indirect
+	github.com/hashicorp/hcl/v2 v2.9.1 // indirect
+	github.com/hashicorp/terraform-plugin-sdk v1.17.2
 	github.com/kr/pretty v0.2.1
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/moby/moby v20.10.5+incompatible // indirect

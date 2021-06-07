@@ -2,7 +2,7 @@ package uaa
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
@@ -153,15 +153,15 @@ func resourceClientRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	session.Log.DebugMessage("Client with ID '%s' retrieved: %# v", id, client)
 
-	if false == client.HasDefaultScope() {
+	if !client.HasDefaultScope() {
 		d.Set("scope", schema.NewSet(resourceStringHash, toInterface(client.Scope)))
 	}
 
-	if false == client.HasDefaultAuthorites() {
+	if !client.HasDefaultAuthorites() {
 		d.Set("authorities", schema.NewSet(resourceStringHash, toInterface(client.Authorities)))
 	}
 
-	if false == client.HasDefaultResourceIds() {
+	if !client.HasDefaultResourceIds() {
 		d.Set("resource_ids", schema.NewSet(resourceStringHash, toInterface(client.ResourceIds)))
 	}
 
@@ -264,7 +264,7 @@ func resourceClientDelete(d *schema.ResourceData, meta interface{}) error {
 
 	id := d.Id()
 	um := session.ClientManager()
-	um.DeleteClient(id)
+	um.DeleteClient(id) //nolint error is authorized here to allow not existing to be deleted without error
 	return nil
 }
 
