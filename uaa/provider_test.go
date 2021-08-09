@@ -11,33 +11,39 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
-var testAccProviders map[string]terraform.ResourceProvider
+var testAccProviders map[string]*schema.Provider
 var testAccProvider *schema.Provider
+var testAccProvidersFactories map[string]func() (*schema.Provider, error)
 
 var tstSession *uaaapi.Session
 
 func init() {
 
-	testAccProvider = Provider().(*schema.Provider)
-	testAccProviders = map[string]terraform.ResourceProvider{
+	testAccProvider = Provider()
+	testAccProviders = map[string]*schema.Provider{
 		"uaa": testAccProvider,
 	}
+	testAccProvidersFactories = map[string]func() (*schema.Provider, error){
+		"uaa": func() (*schema.Provider, error) {
+			return testAccProvider, nil
+		},
+	}
+
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().(*schema.Provider).InternalValidate(); err != nil {
+	if err := Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
 
 func TestProvider_impl(t *testing.T) {
-	var _ terraform.ResourceProvider = Provider()
+	var _ = Provider()
 }
 
 func testAccPreCheck(t *testing.T) {
@@ -253,8 +259,8 @@ func assertSetEquals(attributes map[string]string,
 	}
 	if n > 0 {
 		found := 0
-		for _, e := range expected {
-			if _, ok := attributes[key+"."+strconv.Itoa(hashcode.String(e.(string)))]; ok {
+		for i := range expected {
+			if _, ok := attributes[key+"."+strconv.Itoa(i)]; ok {
 				found++
 			}
 		}

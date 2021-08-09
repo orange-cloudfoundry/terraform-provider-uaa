@@ -2,13 +2,12 @@ package uaa
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 
 	"code.cloudfoundry.org/cli/cf/errors"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
@@ -48,9 +47,9 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
-			Providers:    testAccProviders,
-			CheckDestroy: testAccCheckUserDestroy(username),
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
 				resource.TestStep{
@@ -76,9 +75,9 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
-			Providers:    testAccProviders,
-			CheckDestroy: testAccCheckUserDestroy(username),
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
 				resource.TestStep{
@@ -91,17 +90,11 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 							ref, "password", "qwerty"),
 						resource.TestCheckResourceAttr(
 							ref, "email", username),
-						resource.TestCheckResourceAttr(
-							ref, "groups.#", "3"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("cloud_controller.admin")),
-							"cloud_controller.admin"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("scim.read")),
-							"scim.read"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("scim.write")),
-							"scim.write"),
+						testCheckResourceSet(ref, "groups", []string{
+							"cloud_controller.admin",
+							"scim.read",
+							"scim.write",
+						}),
 					),
 				},
 
@@ -115,20 +108,12 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 							ref, "password", "asdfg"),
 						resource.TestCheckResourceAttr(
 							ref, "email", "cf-admin@acme.com"),
-						resource.TestCheckResourceAttr(
-							ref, "groups.#", "4"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("cloud_controller.admin")),
-							"cloud_controller.admin"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("clients.admin")),
-							"clients.admin"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("uaa.admin")),
-							"uaa.admin"),
-						resource.TestCheckResourceAttr(
-							ref, "groups."+strconv.Itoa(hashcode.String("doppler.firehose")),
-							"doppler.firehose"),
+						testCheckResourceSet(ref, "groups", []string{
+							"clients.admin",
+							"cloud_controller.admin",
+							"doppler.firehose",
+							"uaa.admin",
+						}),
 					),
 				},
 			},

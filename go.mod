@@ -16,6 +16,7 @@ require (
 	code.cloudfoundry.org/rfc5424 v0.0.0-20201103192249-000122071b78 // indirect
 	code.cloudfoundry.org/ykk v0.0.0-20170424192843-e4df4ce2fd4d // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
+	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/bmizerany/pat v0.0.0-20170815010413-6226ea591a40 // indirect
 	github.com/cloudfoundry/bosh-cli v6.4.1+incompatible // indirect
 	github.com/cloudfoundry/bosh-utils v0.0.0-20210320100230-b112c198f4b7 // indirect
@@ -24,7 +25,7 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.8.5 // indirect
 	github.com/hashicorp/hcl/v2 v2.9.1 // indirect
-	github.com/hashicorp/terraform-plugin-sdk v1.17.2
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
 	github.com/kr/pretty v0.2.1
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/moby/moby v20.10.5+incompatible // indirect
@@ -32,4 +33,5 @@ require (
 	github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f // indirect
 	github.com/tedsuo/rata v1.0.0 // indirect
 	github.com/vito/go-interact v1.0.0 // indirect
+	google.golang.org/api v0.34.0 // indirect
 )

@@ -26,7 +26,7 @@ linters:
 
 linters-settings:
   errcheck:
-    ignore: os:MkdirAll,net/http:Write,fmt:.*,io:Close,github.com/hashicorp/terraform-plugin-sdk/helper/schema:ForceNew|Set|Partial|SetPartial
+    ignore: os:MkdirAll,net/http:Write,fmt:.*,io:Close,github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema:ForceNew|Set|Partial|SetPartial
   gofmt:
     simplify: false
 

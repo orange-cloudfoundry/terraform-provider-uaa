@@ -1,12 +1,30 @@
 package main
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/plugin"
+	"context"
+	"flag"
+	"log"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+
 	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 )
 
 func main() {
-	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: uaa.Provider})
+	var debugMode bool
 
+	flag.BoolVar(&debugMode, "debug", false, "set to true to run the provider with support for debuggers like delve")
+	flag.Parse()
+
+	opts := &plugin.ServeOpts{
+		ProviderFunc: uaa.Provider,
+	}
+	if debugMode {
+		err := plugin.Debug(context.Background(), "registry.terraform.io/cloudfoundry-community/cloudfoundry", opts)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		return
+	}
+	plugin.Serve(opts)
 }

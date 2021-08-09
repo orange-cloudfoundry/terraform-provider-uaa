@@ -2,12 +2,13 @@ package uaa
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
-	"regexp"
 )
 
 const clientDataResource = `
@@ -26,8 +27,8 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 	ref := "data.uaa_client.admin-client"
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:  func() { testAccPreCheck(t) },
-			Providers: testAccProviders,
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config: clientDataResource,
@@ -36,12 +37,12 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 						resource.TestCheckResourceAttr(ref, "client_id", "admin"),
 						testCheckResourceSet(ref, "authorities", []string{
 							"clients.read",
-							"password.write",
 							"clients.secret",
 							"clients.write",
-							"uaa.admin",
-							"scim.write",
+							"password.write",
 							"scim.read",
+							"scim.write",
+							"uaa.admin",
 						}),
 					),
 				},
@@ -52,8 +53,8 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 func TestAccDataSourceClient_notfound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:  func() { testAccPreCheck(t) },
-			Providers: testAccProviders,
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config:      clientDataResourceNotFound,

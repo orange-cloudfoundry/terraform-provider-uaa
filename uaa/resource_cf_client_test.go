@@ -1,14 +1,15 @@
 package uaa
 
 import (
-	"code.cloudfoundry.org/cli/cf/errors"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/hashcode"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"regexp"
 	"testing"
+
+	"code.cloudfoundry.org/cli/cf/errors"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
 const clientResource = `
@@ -53,9 +54,9 @@ func TestAccClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
-			Providers:    testAccProviders,
-			CheckDestroy: testAccCheckClientDestroy(clientid),
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config: clientResource,
@@ -87,9 +88,9 @@ func TestAccClient_scope(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
-			Providers:    testAccProviders,
-			CheckDestroy: testAccCheckClientDestroy(clientid),
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config: clientResourceWithScope,
@@ -99,7 +100,7 @@ func TestAccClient_scope(t *testing.T) {
 						resource.TestCheckResourceAttr(ref, "client_id", clientid),
 						testCheckResourceSet(ref, "authorized_grant_types", []string{"client_credentials"}),
 						testCheckResourceSet(ref, "redirect_uri", []string{"https://uaa.local.pcfdev.io/login"}),
-						testCheckResourceSet(ref, "scope", []string{"uaa.admin", "openid"}),
+						testCheckResourceSet(ref, "scope", []string{"openid", "uaa.admin"}),
 					),
 				},
 			},
@@ -111,9 +112,9 @@ func TestAccClient_createError(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:     func() { testAccPreCheck(t) },
-			Providers:    testAccProviders,
-			CheckDestroy: testAccCheckClientDestroy(clientid),
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config:      clientResourceWithoutSecret,
@@ -163,15 +164,14 @@ func testAccCheckClientExists(resource string) resource.TestCheckFunc {
 }
 
 func testCheckResourceSet(ref string, attr string, values []string) resource.TestCheckFunc {
-	var lTests []resource.TestCheckFunc
-	lKey := fmt.Sprintf("%s.#", attr)
-	lVal := fmt.Sprintf("%d", len(values))
-	lTests = append(lTests, resource.TestCheckResourceAttr(ref, lKey, lVal))
 
-	for _, cVal := range values {
-		lKey = fmt.Sprintf("%s.%d", attr, hashcode.String(cVal))
+	lTests := make([]resource.TestCheckFunc, 0)
+
+	for i, cVal := range values {
+		lKey := fmt.Sprintf("%s.%d", attr, i)
 		lTests = append(lTests, resource.TestCheckResourceAttr(ref, lKey, cVal))
 	}
+
 	return resource.ComposeTestCheckFunc(lTests...)
 }
 

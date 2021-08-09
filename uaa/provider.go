@@ -1,12 +1,14 @@
 package uaa
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // Provider -
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -52,12 +54,11 @@ func Provider() terraform.ResourceProvider {
 			"uaa_client": resourceClient(),
 		},
 
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := Config{
 		loginEndpoint:     d.Get("login_endpoint").(string),
 		authEndpoint:      d.Get("auth_endpoint").(string),
@@ -66,5 +67,9 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		caCert:            d.Get("ca_cert").(string),
 		skipSslValidation: d.Get("skip_ssl_validation").(bool),
 	}
-	return config.Client()
+	client, err := config.Client()
+	if err != nil {
+		return client, diag.FromErr(err)
+	}
+	return client, nil
 }
