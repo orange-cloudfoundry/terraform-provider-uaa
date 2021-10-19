@@ -53,7 +53,7 @@ jobs:
       - name: gitleaks
         uses: zricethezav/gitleaks-action@master
         with:
-          config-path: .gitleaks.toml
+          config-path: /github/workspace/.gitleaks.toml
 
       - name: run goreleaser
         uses: goreleaser/goreleaser-action@v2
