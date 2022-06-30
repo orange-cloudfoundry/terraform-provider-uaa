@@ -115,6 +115,10 @@ func ConvertToTranslatableError(err error) error {
 		return RepositoryNameTakenError(e)
 	case actionerror.RepositoryNotRegisteredError:
 		return RepositoryNotRegisteredError(e)
+	case actionerror.RevisionNotFoundError:
+		return RevisionNotFoundError(e)
+	case actionerror.RevisionAmbiguousError:
+		return RevisionAmbiguousError(e)
 	case actionerror.RouteInDifferentSpaceError:
 		return RouteInDifferentSpaceError(e)
 	case actionerror.RoutePathWithTCPDomainError:
@@ -180,6 +184,8 @@ func ConvertToTranslatableError(err error) error {
 		return JobFailedError{JobGUID: e.JobGUID, Message: e.Detail}
 	case ccerror.JobTimeoutError:
 		return JobTimeoutError{JobGUID: e.JobGUID}
+	case ccerror.JobFailedNoErrorError:
+		return JobFailedNoErrorError{JobGUID: e.JobGUID}
 	case ccerror.MultiError:
 		return MultiError{Messages: e.Details()}
 	case ccerror.UnprocessableEntityError:

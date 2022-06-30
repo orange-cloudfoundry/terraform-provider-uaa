@@ -6,6 +6,8 @@
 package ui
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -28,7 +30,7 @@ var realInteract interactorFunc = func(prompt string, choices ...interact.Choice
 	}
 }
 
-//go:generate counterfeiter . Interactor
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Interactor
 
 // Interactor hides interact.NewInteraction for testing purposes
 type Interactor interface {
@@ -53,7 +55,7 @@ func (w *interactionWrapper) SetOut(o io.Writer) {
 	w.Output = o
 }
 
-//go:generate counterfeiter . Exiter
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Exiter
 
 // Exiter hides os.Exit for testing purposes
 type Exiter interface {
@@ -272,6 +274,31 @@ func (ui *UI) DisplayTextWithFlavor(template string, templateValues ...map[strin
 		firstTemplateValues[key] = ui.modifyColor(fmt.Sprint(value), color.New(color.FgCyan, color.Bold))
 	}
 	fmt.Fprintf(ui.Out, "%s\n", ui.TranslateText(template, firstTemplateValues))
+}
+
+// DisplayJSON encodes and indents the input
+// and outputs the result to ui.Out.
+func (ui *UI) DisplayJSON(name string, jsonData interface{}) error {
+	ui.terminalLock.Lock()
+	defer ui.terminalLock.Unlock()
+
+	buff := new(bytes.Buffer)
+	encoder := json.NewEncoder(buff)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "  ")
+
+	err := encoder.Encode(jsonData)
+	if err != nil {
+		return err
+	}
+
+	if name != "" {
+		fmt.Fprintf(ui.Out, "%s\n", fmt.Sprintf("%s: %s", name, buff))
+	} else {
+		fmt.Fprintf(ui.Out, "%s\n", buff)
+	}
+
+	return nil
 }
 
 // FlushDeferred displays text previously deferred (using DeferText) to the UI's
