@@ -60,14 +60,6 @@ type UAAUserGroup struct {
 	Type    string `json:"type"`
 }
 
-// UAAGroupResourceList -
-type UAAGroupResourceList struct {
-	Resources []struct {
-		ID          string `json:"id"`
-		DisplayName string `json:"displayName"`
-	} `json:"resources"`
-}
-
 // NewUserManager -
 func newUserManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *Logger) (um *UserManager, err error) {
 
@@ -90,7 +82,7 @@ func (um *UserManager) loadGroups() (err error) {
 		return
 	}
 
-	// Retrieve alls groups
+	// Retrieve all groups
 	groupList := &UAAGroupResourceList{}
 	err = um.uaaGateway.GetResource(
 		fmt.Sprintf("%s/Groups", uaaEndpoint),

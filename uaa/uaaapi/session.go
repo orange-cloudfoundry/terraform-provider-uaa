@@ -24,6 +24,7 @@ type Session struct {
 	authManager   *AuthManager
 	userManager   *UserManager
 	clientManager *ClientManager
+	groupManager  *GroupManager
 }
 
 // uaaErrorResponse -
@@ -68,6 +69,11 @@ func NewSession(
 		return nil, err
 	}
 
+	s.groupManager, err = newGroupManager(s.config, s.uaaGateway, s.Log)
+	if err != nil {
+		return nil, err
+	}
+
 	s.clientManager, err = newClientManager(s.config, s.uaaGateway, s.Log)
 	if err != nil {
 		return nil, err
@@ -85,9 +91,14 @@ func (s *Session) UserManager() *UserManager {
 	return s.userManager
 }
 
-// UserManager -
+// ClientManager -
 func (s *Session) ClientManager() *ClientManager {
 	return s.clientManager
+}
+
+// GroupManager -
+func (s *Session) GroupManager() *GroupManager {
+	return s.groupManager
 }
 
 // AuthManager -
