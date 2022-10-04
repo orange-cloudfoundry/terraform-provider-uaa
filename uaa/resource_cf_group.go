@@ -25,7 +25,9 @@ func resourceGroup() *schema.Resource {
 			},
 			"zone_id": {
 				Type:     schema.TypeString,
+				ForceNew: true,
 				Optional: true,
+				Default:  "uaa",
 			},
 		},
 	}
@@ -63,8 +65,9 @@ func resourceGroupRead(d *schema.ResourceData, meta interface{}) error {
 
 	gm := session.GroupManager()
 	id := d.Id()
+	zoneId := d.Get("zone_id").(string)
 
-	group, err := gm.GetGroup(id)
+	group, err := gm.GetGroup(id, zoneId)
 	if err != nil {
 		d.SetId("")
 		return err
@@ -105,7 +108,7 @@ func resourceGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceGroupDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceGroupDelete(d *schema.ResourceData, meta interface{}) (err error) {
 
 	session := meta.(*uaaapi.Session)
 	if session == nil {
@@ -113,8 +116,12 @@ func resourceGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	id := d.Id()
+	zoneId := d.Get("zone_id").(string)
 	gm := session.GroupManager()
-	gm.DeleteGroup(id) //nolint error is authorized here to allow not existing to be deleted without error
+	err = gm.DeleteGroup(id, zoneId) //nolint error is authorized here to allow not existing to be deleted without error
+	if err != nil {
+		return err
+	}
 
-	return nil
+	return
 }

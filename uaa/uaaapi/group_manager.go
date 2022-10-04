@@ -28,6 +28,8 @@ type UAAGroupResourceList struct {
 	Resources []UAAGroup `json:"resources"`
 }
 
+const zoneIdHeaderName = "X-Identity-Zone-Id"
+
 func newGroupManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *Logger) (gm *GroupManager, err error) {
 	gm = &GroupManager{
 		log:        logger,
@@ -37,7 +39,7 @@ func newGroupManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *L
 	return
 }
 
-func (gm *GroupManager) CreateGroup(displayName string, description string, zoneId string) (group UAAGroup, err error) {
+func (gm *GroupManager) CreateGroup(displayName string, description string, zoneId string) (group *UAAGroup, err error) {
 	uaaEndpoint := gm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
 		err = errors.New("UAA endpoint missing from config file")
@@ -55,8 +57,20 @@ func (gm *GroupManager) CreateGroup(displayName string, description string, zone
 		return
 	}
 
-	group = UAAGroup{}
-	err = gm.uaaGateway.CreateResource(uaaEndpoint, "/Groups", bytes.NewReader(body), &group)
+	request, err := gm.uaaGateway.NewRequest(
+		"POST",
+		fmt.Sprintf("%s/Groups", uaaEndpoint),
+		gm.config.AccessToken(),
+		bytes.NewReader(body),
+	)
+	if err != nil {
+		return nil, err
+	}
+	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+
+	group = &UAAGroup{}
+	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
+
 	switch httpErr := err.(type) {
 	case errors.HTTPError:
 		if httpErr.StatusCode() == http.StatusConflict {
@@ -66,42 +80,27 @@ func (gm *GroupManager) CreateGroup(displayName string, description string, zone
 	return
 }
 
-func (gm *GroupManager) GetGroup(id string) (group *UAAGroup, err error) {
+func (gm *GroupManager) GetGroup(id, zoneId string) (group *UAAGroup, err error) {
 	uaaEndpoint := gm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
 		err = errors.New("UAA endpoint missing from config file")
 		return
 	}
+
+	request, err := gm.uaaGateway.NewRequest(
+		"GET",
+		fmt.Sprintf("%s/Groups/%s", uaaEndpoint, id),
+		gm.config.AccessToken(),
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
 
 	group = &UAAGroup{}
-	err = gm.uaaGateway.GetResource(
-		fmt.Sprintf("%s/Groups/%s", uaaEndpoint, id),
-		group)
+	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
 
-	return
-}
-
-func (gm *GroupManager) FindByDisplayName(displayName string) (group UAAGroup, err error) {
-
-	uaaEndpoint := gm.config.UaaEndpoint()
-	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
-		return
-	}
-
-	displayNameFilter := url.QueryEscape(fmt.Sprintf(`displayName Eq "%s"`, displayName))
-	path := fmt.Sprintf("%s/Groups?filter=%s", uaaEndpoint, displayNameFilter)
-
-	groupResourceList := &UAAGroupResourceList{}
-	err = gm.uaaGateway.GetResource(path, groupResourceList)
-
-	if err == nil {
-		if len(groupResourceList.Resources) > 0 {
-			group = groupResourceList.Resources[0]
-		} else {
-			err = errors.NewModelNotFoundError("Group", displayName)
-		}
-	}
 	return
 }
 
@@ -116,7 +115,6 @@ func (gm *GroupManager) UpdateGroup(id, displayName, description, zoneId string)
 	groupResource := UAAGroup{
 		DisplayName: displayName,
 		Description: description,
-		ZoneId:      zoneId,
 	}
 
 	body, err := json.Marshal(groupResource)
@@ -124,13 +122,17 @@ func (gm *GroupManager) UpdateGroup(id, displayName, description, zoneId string)
 		return
 	}
 
-	request, err := gm.uaaGateway.NewRequest("PUT",
+	request, err := gm.uaaGateway.NewRequest(
+		"PUT",
 		fmt.Sprintf("%s/Groups/%s", uaaEndpoint, id),
-		gm.config.AccessToken(), bytes.NewReader(body))
+		gm.config.AccessToken(),
+		bytes.NewReader(body),
+	)
 	if err != nil {
 		return nil, err
 	}
 	request.HTTPReq.Header.Set("If-Match", "*")
+	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
 
 	group = &UAAGroup{}
 	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
@@ -138,13 +140,63 @@ func (gm *GroupManager) UpdateGroup(id, displayName, description, zoneId string)
 	return
 }
 
-func (gm *GroupManager) DeleteGroup(id string) (err error) {
+func (gm *GroupManager) DeleteGroup(id, zoneId string) (err error) {
 
 	uaaEndpoint := gm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
 		err = errors.New("UAA endpoint missing from config file")
 		return
 	}
-	err = gm.uaaGateway.DeleteResource(uaaEndpoint, fmt.Sprintf("/Groups/%s", id))
+
+	request, err := gm.uaaGateway.NewRequest(
+		"DELETE",
+		fmt.Sprintf("%s/Groups/%s", uaaEndpoint, id),
+		gm.config.AccessToken(),
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	_, err = gm.uaaGateway.PerformRequest(request)
+
+	return
+}
+
+func (gm *GroupManager) FindByDisplayName(displayName, zoneId string) (group *UAAGroup, err error) {
+
+	uaaEndpoint := gm.config.UaaEndpoint()
+	if len(uaaEndpoint) == 0 {
+		err = errors.New("UAA endpoint missing from config file")
+		return
+	}
+
+	displayNameFilter := url.QueryEscape(fmt.Sprintf(`displayName Eq "%s"`, displayName))
+	path := fmt.Sprintf("%s/Groups?filter=%s", uaaEndpoint, displayNameFilter)
+
+	request, err := gm.uaaGateway.NewRequest(
+		"GET",
+		path,
+		gm.config.AccessToken(),
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+
+	groupResourceList := &UAAGroupResourceList{}
+	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, groupResourceList)
+	if err != nil {
+		return nil, err
+	}
+
+	if err == nil {
+		if len(groupResourceList.Resources) > 0 {
+			group = &groupResourceList.Resources[0]
+		} else {
+			err = errors.NewModelNotFoundError("Group", displayName)
+		}
+	}
 	return
 }

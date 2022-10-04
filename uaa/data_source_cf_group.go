@@ -41,12 +41,13 @@ func dataSourceGroupRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	var (
 		displayName string
-		group       uaaapi.UAAGroup
+		group       *uaaapi.UAAGroup
 	)
 
 	displayName = d.Get("display_name").(string)
+	zoneId := d.Get("zone_id").(string)
 
-	group, err = gm.FindByDisplayName(displayName)
+	group, err = gm.FindByDisplayName(displayName, zoneId)
 	if err != nil {
 		return
 	}
