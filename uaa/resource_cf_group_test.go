@@ -6,6 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"regexp"
 	"testing"
 )
 
@@ -38,6 +39,9 @@ func TestGroupResource_normal(t *testing.T) {
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckGroupDestroy(originalDisplayName, defaultZoneId),
+			// TODO: this would actually be in updatedZoneId at the end if the tests were contained
+			// 			in a way that allowed us to run the final step.
+			//CheckDestroy: testAccCheckGroupDestroy(originalDisplayName, updatedZoneId),
 			Steps: []resource.TestStep{
 				{
 					Config: createTestGroupResource(originalDisplayName, originalDescription, ""),
@@ -82,6 +86,23 @@ func TestGroupResource_normal(t *testing.T) {
 				//		resource.TestCheckResourceAttr(ref, "zone_id", updatedZoneId),
 				//	),
 				//},
+			},
+		})
+}
+
+func TestGroupResource_createError(t *testing.T) {
+	clientid := "my-name2"
+
+	resource.Test(t,
+		resource.TestCase{
+			PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: testAccProvidersFactories,
+			CheckDestroy:      testAccCheckClientDestroy(clientid),
+			Steps: []resource.TestStep{
+				resource.TestStep{
+					Config:      clientResourceWithoutSecret,
+					ExpectError: regexp.MustCompile(".*Client secret is required for client_credentials.*"),
+				},
 			},
 		})
 }
