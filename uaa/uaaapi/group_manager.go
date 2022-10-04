@@ -34,6 +34,25 @@ func newGroupManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *L
 	return
 }
 
+func (gm *GroupManager) CreateGroup(displayName string, zoneId string) (group UAAGroup, err error) {
+
+}
+
+func (gm *GroupManager) GetGroup(id string) (group *UAAGroup, err error) {
+	uaaEndpoint := gm.config.UaaEndpoint()
+	if len(uaaEndpoint) == 0 {
+		err = errors.New("UAA endpoint missing from config file")
+		return
+	}
+
+	group = &UAAGroup{}
+	err = gm.uaaGateway.GetResource(
+		fmt.Sprintf("%s/Groups/%s", uaaEndpoint, id),
+		group)
+
+	return
+}
+
 func (gm *GroupManager) FindByDisplayName(displayName string) (group UAAGroup, err error) {
 
 	uaaEndpoint := gm.config.UaaEndpoint()
