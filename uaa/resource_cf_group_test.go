@@ -16,7 +16,7 @@ const originalDescription = "A group used for testing group resource functionali
 const updatedDisplayName = "updated.display.name"
 const updatedDescription = "An updated description for the group resource"
 const defaultZoneId = "uaa"
-const updatedZoneId = "not-uaa"
+const updatedZoneId = "test-zone"
 
 func createTestGroupResourceAttr(attribute, value string) string {
 	if attribute == "" || value == "" {
@@ -38,10 +38,7 @@ func TestGroupResource_normal(t *testing.T) {
 		resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      testAccCheckGroupDestroy(originalDisplayName, defaultZoneId),
-			// TODO: this would actually be in updatedZoneId at the end if the tests were contained
-			// 			in a way that allowed us to run the final step.
-			//CheckDestroy: testAccCheckGroupDestroy(originalDisplayName, updatedZoneId),
+			CheckDestroy:      testAccCheckGroupDestroy(originalDisplayName, updatedZoneId),
 			Steps: []resource.TestStep{
 				{
 					Config: createTestGroupResource(originalDisplayName, originalDescription, ""),
@@ -73,35 +70,30 @@ func TestGroupResource_normal(t *testing.T) {
 						resource.TestCheckResourceAttr(ref, "zone_id", defaultZoneId),
 					),
 				},
-				// TODO: figure out a more consistent way to run these tests to ensure updatedZoneId exists in the
-				// 			test instance.  This passes if it exists, but would fail for others who run this since
-				//			it's pointed at a real UAA instance and it spins up with only the default identity zone.
-				//{
-				//	Config: createTestGroupResource(updatedDisplayName, updatedDescription, updatedZoneId),
-				//	Check: resource.ComposeTestCheckFunc(
-				//		checkDataSourceGroupExists(ref),
-				//		resource.TestCheckResourceAttrSet(ref, "id"),
-				//		resource.TestCheckResourceAttr(ref, "display_name", updatedDisplayName),
-				//		resource.TestCheckResourceAttr(ref, "description", updatedDescription),
-				//		resource.TestCheckResourceAttr(ref, "zone_id", updatedZoneId),
-				//	),
-				//},
+				{
+					Config: createTestGroupResource(updatedDisplayName, updatedDescription, updatedZoneId),
+					Check: resource.ComposeTestCheckFunc(
+						checkDataSourceGroupExists(ref),
+						resource.TestCheckResourceAttrSet(ref, "id"),
+						resource.TestCheckResourceAttr(ref, "display_name", updatedDisplayName),
+						resource.TestCheckResourceAttr(ref, "description", updatedDescription),
+						resource.TestCheckResourceAttr(ref, "zone_id", updatedZoneId),
+					),
+				},
 			},
 		})
 }
 
 func TestGroupResource_createError(t *testing.T) {
-	clientid := "my-name2"
-
 	resource.Test(t,
 		resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
-			CheckDestroy:      testAccCheckClientDestroy(clientid),
+			CheckDestroy:      testAccCheckGroupDestroy(ref, defaultZoneId),
 			Steps: []resource.TestStep{
-				resource.TestStep{
-					Config:      clientResourceWithoutSecret,
-					ExpectError: regexp.MustCompile(".*Client secret is required for client_credentials.*"),
+				{
+					Config:      createTestGroupResource("", originalDescription, defaultZoneId),
+					ExpectError: regexp.MustCompile("The argument \"display_name\" is required, but no definition was found."),
 				},
 			},
 		})
