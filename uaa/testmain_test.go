@@ -51,11 +51,9 @@ func (uaaTestManager *UaaTestManager) PrepareEnvironment() {
 
 func (uaaTestManager *UaaTestManager) PrepareDbContainer() {
 	log.Println("Preparing test db container...")
-	//uaaTestManager.dbContainer = preparePostgresContainer(uaaTestManager.context)
 
 	req := testcontainers.ContainerRequest{
 		Image: "postgres:14.5-alpine",
-		//ExposedPorts: []string{"5432/tcp"},
 		Env: map[string]string{
 			"POSTGRES_DB":       os.Getenv("DB_DATABASE"),
 			"POSTGRES_USER":     os.Getenv("DB_USERNAME"),
