@@ -22,8 +22,8 @@ variable "uaa_client_secret" {}
 
 provider "uaa" {
     
-    login_url = "${var.uaa_login_url}"
-    auth_url = "${var.uaa_auth_url}"
+    login_endpoint = "${var.uaa_login_url}"
+    auth_endpoint = "${var.uaa_auth_url}"
 
     client_id = "admin"
     client_secret = "${var.uaa_client_secret}"
@@ -36,9 +36,9 @@ provider "uaa" {
 
 The following arguments are supported:
 
-* `login_url` - (Required) Login/token endpoint (e.g. https://login.local.pcfdev.io). This can also be specified with the `UAA_LOGIN_URL` shell environment variable.
+* `login_endpoint` - (Required) Login/token endpoint (e.g. https://login.local.pcfdev.io). This can also be specified with the `UAA_LOGIN_URL` shell environment variable.
 
-* `auth_url` - (Required) Authorization endpoint (e.g. https://uaa.local.pcfdev.io). This can also be specified with the `UAA_AUTH_URL` shell environment variable.
+* `auth_endpoint` - (Required) Authorization endpoint (e.g. https://uaa.local.pcfdev.io). This can also be specified with the `UAA_AUTH_URL` shell environment variable.
 
 * `client_id` - (Optional) The UAA admin client ID. Defaults to "admin". This can also be specified with the `UAA_CLIENT_ID` shell environment variable.
 

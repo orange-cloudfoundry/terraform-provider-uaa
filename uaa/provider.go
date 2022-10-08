@@ -47,6 +47,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"uaa_user":   dataSourceUser(),
 			"uaa_client": dataSourceClient(),
+			"uaa_group":  dataSourceGroup(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
