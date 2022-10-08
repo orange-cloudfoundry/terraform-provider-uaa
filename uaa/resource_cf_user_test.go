@@ -68,7 +68,6 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 		})
 }
 
-// TODO: this test isn't working with test containers...  what needs to be adjusted in uaa.yml to fix it?
 func TestAccUser_WithGroups_normal(t *testing.T) {
 
 	ref := "uaa_user.admin-service-user"
