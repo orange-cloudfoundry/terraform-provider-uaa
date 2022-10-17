@@ -1,4 +1,4 @@
-package uaa_test
+package uaatest
 
 import (
 	"code.cloudfoundry.org/cli/cf/errors"

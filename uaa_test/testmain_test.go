@@ -1,9 +1,9 @@
-package uaa_test
+package uaatest
 
 import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/provider"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"

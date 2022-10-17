@@ -1,10 +1,6 @@
-package util
+package uaatest
 
-import (
-	"fmt"
-)
-
-// Assertions
+import "fmt"
 
 func AssertSame(expected interface{}, actual interface{}) error {
 	if actual != expected {
