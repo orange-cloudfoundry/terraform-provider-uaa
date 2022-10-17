@@ -39,12 +39,14 @@ type UaaIntegrationTestManager struct {
 }
 
 func newIntegrationTestManager(uaaConfigPath string) *UaaIntegrationTestManager {
-	context := context.Background()
+	ctx := context.Background()
 
-	uaaTestManager := &UaaIntegrationTestManager{context: context}
+	uaaTestManager := &UaaIntegrationTestManager{context: ctx}
 	uaaTestManager.prepareEnvironment()
 	uaaTestManager.prepareDbContainer()
+	defer uaaTestManager.dbContainer.Terminate(ctx)
 	uaaTestManager.prepareUaaContainer(uaaConfigPath)
+	defer uaaTestManager.uaaContainer.Terminate(ctx)
 	uaaTestManager.createTestIdentityZone()
 	uaaTestManager.prepareProviderFactories()
 
@@ -160,13 +162,6 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareProviderFactories() {
 			return uaaTestManager.uaaProvider, nil
 		},
 	}
-}
-
-func (uaaTestManager *UaaIntegrationTestManager) destroy() {
-	log.Println("Terminating docker containers...")
-
-	defer uaaTestManager.uaaContainer.Terminate(uaaTestManager.context)
-	defer uaaTestManager.dbContainer.Terminate(uaaTestManager.context)
 }
 
 func (uaaTestManager *UaaIntegrationTestManager) UaaSession() *uaaapi.Session {
