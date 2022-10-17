@@ -5,9 +5,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/group"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user"
 )
 
@@ -34,7 +34,7 @@ var Resources = map[string]*schema.Resource{
 }
 
 func configureContext(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	config := uaaapi.Config{
+	config := api.Config{
 		LoginEndpoint:     d.Get(fields.LoginEndpoint.String()).(string),
 		AuthEndpoint:      d.Get(fields.AuthEndpoint.String()).(string),
 		ClientID:          d.Get(fields.ClientId.String()).(string),

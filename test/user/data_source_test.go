@@ -5,7 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/terraform-providers/terraform-provider-uaa/test/util"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"testing"
 )
 
@@ -54,7 +54,7 @@ func checkDataSourceUserExists(resource string) resource.TestCheckFunc {
 
 		var (
 			err  error
-			user uaaapi.UAAUser
+			user api.UAAUser
 		)
 
 		user, err = util.IntegrationTestManager.UaaSession().UserManager().FindByUsername(name)

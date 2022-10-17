@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
@@ -163,6 +163,6 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareProviderFactories() {
 	}
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) UaaSession() *uaaapi.Session {
-	return uaaTestManager.uaaProvider.Meta().(*uaaapi.Session)
+func (uaaTestManager *UaaIntegrationTestManager) UaaSession() *api.Session {
+	return uaaTestManager.uaaProvider.Meta().(*api.Session)
 }

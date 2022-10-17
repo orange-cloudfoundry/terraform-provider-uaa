@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/group/fields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/terraform-providers/terraform-provider-uaa/util"
 )
 
@@ -19,7 +19,7 @@ var Resource = &schema.Resource{
 
 func createResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := i.(*uaaapi.Session)
+	session := i.(*api.Session)
 	if session == nil {
 		return diag.Errorf("client is nil")
 	}
@@ -42,7 +42,7 @@ func createResource(ctx context.Context, data *schema.ResourceData, i interface{
 
 func readResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := i.(*uaaapi.Session)
+	session := i.(*api.Session)
 	if session == nil {
 		return diag.Errorf("client is nil")
 	}
@@ -66,7 +66,7 @@ func readResource(ctx context.Context, data *schema.ResourceData, i interface{})
 
 func updateResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := i.(*uaaapi.Session)
+	session := i.(*api.Session)
 	if session == nil {
 		return diag.Errorf("client is nil")
 	}
@@ -94,7 +94,7 @@ func updateResource(ctx context.Context, data *schema.ResourceData, i interface{
 
 func deleteResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := i.(*uaaapi.Session)
+	session := i.(*api.Session)
 	if session == nil {
 		return diag.Errorf("client is nil")
 	}

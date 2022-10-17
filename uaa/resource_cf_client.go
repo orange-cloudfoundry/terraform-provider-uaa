@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 )
 
 func ResourceClient() *schema.Resource {
@@ -105,12 +105,12 @@ func ResourceClient() *schema.Resource {
 
 func resourceClientCreate(d *schema.ResourceData, meta interface{}) error {
 
-	session := meta.(*uaaapi.Session)
+	session := meta.(*api.Session)
 	if session == nil {
 		return fmt.Errorf("client is nil")
 	}
 
-	client := uaaapi.UAAClient{
+	client := api.UAAClient{
 		ClientID:             d.Get("client_id").(string),
 		ClientSecret:         d.Get("client_secret").(string),
 		AuthorizedGrantTypes: toStrings(d.Get("authorized_grant_types")),
@@ -141,7 +141,7 @@ func resourceClientCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceClientRead(d *schema.ResourceData, meta interface{}) error {
-	session := meta.(*uaaapi.Session)
+	session := meta.(*api.Session)
 	if session == nil {
 		return fmt.Errorf("client is nil")
 	}
@@ -187,14 +187,14 @@ func resourceClientRead(d *schema.ResourceData, meta interface{}) error {
 func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 	var (
 		newResource bool
-		session     *uaaapi.Session
+		session     *api.Session
 	)
 
 	if m, ok := meta.(NewResourceMeta); ok {
-		session = m.Meta.(*uaaapi.Session)
+		session = m.Meta.(*api.Session)
 		newResource = true
 	} else {
-		session = meta.(*uaaapi.Session)
+		session = meta.(*api.Session)
 		if session == nil {
 			return fmt.Errorf("client is nil")
 		}
@@ -222,7 +222,7 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 		approval := util.GetChangedValueBool("approvals_deleted", &u, d)
 
 		if u {
-			client := uaaapi.UAAClient{
+			client := api.UAAClient{
 				ClientID:             id,
 				AuthorizedGrantTypes: *grants,
 				RedirectURI:          *uris,
@@ -260,7 +260,7 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceClientDelete(d *schema.ResourceData, meta interface{}) error {
-	session := meta.(*uaaapi.Session)
+	session := meta.(*api.Session)
 	if session == nil {
 		return fmt.Errorf("client is nil")
 	}

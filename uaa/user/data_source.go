@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user/fields"
 )
 
@@ -22,7 +22,7 @@ var dataSourceSchema = map[string]*schema.Schema{
 
 func readDataSource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := i.(*uaaapi.Session)
+	session := i.(*api.Session)
 	if session == nil {
 		return diag.Errorf("client is nil")
 	}

@@ -1,4 +1,4 @@
-package uaaapi
+package api
 
 import (
 	"crypto/rand"

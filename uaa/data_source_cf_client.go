@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 )
 
 func DataSourceClient() *schema.Resource {
@@ -98,7 +98,7 @@ func DataSourceClient() *schema.Resource {
 
 func dataSourceClientRead(d *schema.ResourceData, meta interface{}) (err error) {
 
-	session := meta.(*uaaapi.Session)
+	session := meta.(*api.Session)
 	if session == nil {
 		return fmt.Errorf("client is nil")
 	}
@@ -107,7 +107,7 @@ func dataSourceClientRead(d *schema.ResourceData, meta interface{}) (err error) 
 
 	var (
 		id     string
-		client uaaapi.UAAClient
+		client api.UAAClient
 	)
 
 	id = d.Get("client_id").(string)
