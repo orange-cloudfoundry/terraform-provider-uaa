@@ -1,4 +1,4 @@
-package test
+package client
 
 import (
 	"code.cloudfoundry.org/cli/cf/errors"

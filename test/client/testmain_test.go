@@ -1,4 +1,4 @@
-package test
+package client
 
 import (
 	"github.com/terraform-providers/terraform-provider-uaa/test/util"
@@ -7,6 +7,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	uaaConfigPath, _ := filepath.Abs("../test/resources/uaa.yml")
+	uaaConfigPath, _ := filepath.Abs("../../test/resources/uaa.yml")
 	util.RunIntegrationTests(m, uaaConfigPath)
 }
