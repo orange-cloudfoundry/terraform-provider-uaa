@@ -1,7 +1,8 @@
-package uaa
+package user
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 	"testing"
 
 	"code.cloudfoundry.org/cli/cf/errors"
@@ -47,8 +48,8 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			PreCheck:          func() { uaa.testAccPreCheck(t) },
+			ProviderFactories: uaa.testAccProvidersFactories,
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
@@ -75,8 +76,8 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			PreCheck:          func() { uaa.testAccPreCheck(t) },
+			ProviderFactories: uaa.testAccProvidersFactories,
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
@@ -90,7 +91,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 							ref, "password", "qwerty"),
 						resource.TestCheckResourceAttr(
 							ref, "email", username),
-						testCheckResourceSet(ref, "groups", []string{
+						uaa.testCheckResourceSet(ref, "groups", []string{
 							"cloud_controller.admin",
 							"scim.read",
 							"scim.write",
@@ -108,7 +109,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 							ref, "password", "asdfg"),
 						resource.TestCheckResourceAttr(
 							ref, "email", "cf-admin@acme.com"),
-						testCheckResourceSet(ref, "groups", []string{
+						uaa.testCheckResourceSet(ref, "groups", []string{
 							"clients.admin",
 							"cloud_controller.admin",
 							"doppler.firehose",
@@ -124,7 +125,7 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 
-		session := testAccProvider.Meta().(*uaaapi.Session)
+		session := uaa.testAccProvider.Meta().(*uaaapi.Session)
 
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
@@ -148,19 +149,19 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 			"retrieved user for resource '%s' with id '%s': %# v",
 			resource, id, user)
 
-		if err := assertEquals(attributes, "name", user.Username); err != nil {
+		if err := uaa.assertEquals(attributes, "name", user.Username); err != nil {
 			return err
 		}
-		if err := assertEquals(attributes, "origin", user.Origin); err != nil {
+		if err := uaa.assertEquals(attributes, "origin", user.Origin); err != nil {
 			return err
 		}
-		if err := assertEquals(attributes, "given_name", user.Name.GivenName); err != nil {
+		if err := uaa.assertEquals(attributes, "given_name", user.Name.GivenName); err != nil {
 			return err
 		}
-		if err := assertEquals(attributes, "family_name", user.Name.FamilyName); err != nil {
+		if err := uaa.assertEquals(attributes, "family_name", user.Name.FamilyName); err != nil {
 			return err
 		}
-		if err := assertEquals(attributes, "email", user.Emails[0].Value); err != nil {
+		if err := uaa.assertEquals(attributes, "email", user.Emails[0].Value); err != nil {
 			return err
 		}
 
@@ -170,7 +171,7 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 				groups = append(groups, g.Display)
 			}
 		}
-		if err := assertSetEquals(attributes, "groups", groups); err != nil {
+		if err := uaa.assertSetEquals(attributes, "groups", groups); err != nil {
 			return err
 		}
 
@@ -181,7 +182,7 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 func testAccCheckUserDestroy(username string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
-		session := testAccProvider.Meta().(*uaaapi.Session)
+		session := uaa.testAccProvider.Meta().(*uaaapi.Session)
 		um := session.UserManager()
 		if _, err := um.FindByUsername(username); err != nil {
 			switch err.(type) {

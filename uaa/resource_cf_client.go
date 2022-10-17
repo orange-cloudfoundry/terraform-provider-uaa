@@ -2,6 +2,7 @@ package uaa
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -30,37 +31,37 @@ func resourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"redirect_uri": &schema.Schema{
 				Type:     schema.TypeSet,
 				Required: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"scope": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"resource_ids": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"authorities": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"autoapprove": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"access_token_validity": &schema.Schema{
 				Type:     schema.TypeInt,
@@ -74,7 +75,7 @@ func resourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
@@ -96,7 +97,7 @@ func resourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 		},
 	}
@@ -156,29 +157,29 @@ func resourceClientRead(d *schema.ResourceData, meta interface{}) error {
 	session.Log.DebugMessage("Client with ID '%s' retrieved: %# v", id, client)
 
 	if !client.HasDefaultScope() {
-		d.Set("scope", schema.NewSet(resourceStringHash, toInterface(client.Scope)))
+		d.Set("scope", schema.NewSet(util.ResourceStringHash, toInterface(client.Scope)))
 	}
 
 	if !client.HasDefaultAuthorites() {
-		d.Set("authorities", schema.NewSet(resourceStringHash, toInterface(client.Authorities)))
+		d.Set("authorities", schema.NewSet(util.ResourceStringHash, toInterface(client.Authorities)))
 	}
 
 	if !client.HasDefaultResourceIds() {
-		d.Set("resource_ids", schema.NewSet(resourceStringHash, toInterface(client.ResourceIds)))
+		d.Set("resource_ids", schema.NewSet(util.ResourceStringHash, toInterface(client.ResourceIds)))
 	}
 
 	d.Set("client_id", client.ClientID)
-	d.Set("authorized_grant_types", schema.NewSet(resourceStringHash, toInterface(client.AuthorizedGrantTypes)))
-	d.Set("redirect_uri", schema.NewSet(resourceStringHash, toInterface(client.RedirectURI)))
-	d.Set("autoapprove", schema.NewSet(resourceStringHash, toInterface(client.Autoapprove)))
+	d.Set("authorized_grant_types", schema.NewSet(util.ResourceStringHash, toInterface(client.AuthorizedGrantTypes)))
+	d.Set("redirect_uri", schema.NewSet(util.ResourceStringHash, toInterface(client.RedirectURI)))
+	d.Set("autoapprove", schema.NewSet(util.ResourceStringHash, toInterface(client.Autoapprove)))
 	d.Set("access_token_validity", client.AccessTokenValidity)
 	d.Set("refresh_token_validity", client.RefreshTokenValidity)
-	d.Set("allowedproviders", schema.NewSet(resourceStringHash, toInterface(client.Allowedproviders)))
+	d.Set("allowedproviders", schema.NewSet(util.ResourceStringHash, toInterface(client.Allowedproviders)))
 	d.Set("name", client.Name)
 	d.Set("token_salt", client.TokenSalt)
 	d.Set("createdwith", client.CreatedWith)
 	d.Set("approvals_deleted", client.ApprovalsDeleted)
-	d.Set("required_user_groups", schema.NewSet(resourceStringHash, toInterface(client.RequiredUserGroups)))
+	d.Set("required_user_groups", schema.NewSet(util.ResourceStringHash, toInterface(client.RequiredUserGroups)))
 
 	return nil
 }
@@ -190,7 +191,7 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 	)
 
 	if m, ok := meta.(NewResourceMeta); ok {
-		session = m.meta.(*uaaapi.Session)
+		session = m.Meta.(*uaaapi.Session)
 		newResource = true
 	} else {
 		session = meta.(*uaaapi.Session)
@@ -205,20 +206,20 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if !newResource {
 		u := false
-		name := getChangedValueString("name", &u, d)
-		salt := getChangedValueString("token_salt", &u, d)
-		created := getChangedValueString("createdwith", &u, d)
-		providers := getChangedValueStringList("allowedproviders", &u, d)
-		grants := getChangedValueStringList("authorized_grant_types", &u, d)
-		uris := getChangedValueStringList("redirect_uri", &u, d)
-		scope := getChangedValueStringList("scopes", &u, d)
-		resources := getChangedValueStringList("resource_ids", &u, d)
-		authorities := getChangedValueStringList("authorities", &u, d)
-		groups := getChangedValueStringList("required_user_groups", &u, d)
-		autoapprove := getChangedValueStringList("autoapprove", &u, d)
-		accestok := getChangedValueInt("access_token_validity", &u, d)
-		refreshtok := getChangedValueInt("refresh_token_validity", &u, d)
-		approval := getChangedValueBool("approvals_deleted", &u, d)
+		name := util.GetChangedValueString("name", &u, d)
+		salt := util.GetChangedValueString("token_salt", &u, d)
+		created := util.GetChangedValueString("createdwith", &u, d)
+		providers := util.GetChangedValueStringList("allowedproviders", &u, d)
+		grants := util.GetChangedValueStringList("authorized_grant_types", &u, d)
+		uris := util.GetChangedValueStringList("redirect_uri", &u, d)
+		scope := util.GetChangedValueStringList("scopes", &u, d)
+		resources := util.GetChangedValueStringList("resource_ids", &u, d)
+		authorities := util.GetChangedValueStringList("authorities", &u, d)
+		groups := util.GetChangedValueStringList("required_user_groups", &u, d)
+		autoapprove := util.GetChangedValueStringList("autoapprove", &u, d)
+		accestok := util.GetChangedValueInt("access_token_validity", &u, d)
+		refreshtok := util.GetChangedValueInt("refresh_token_validity", &u, d)
+		approval := util.GetChangedValueBool("approvals_deleted", &u, d)
 
 		if u {
 			client := uaaapi.UAAClient{
@@ -245,7 +246,7 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 			session.Log.DebugMessage("Client updated: %# v", nclient)
 		}
 
-		updateSecret, oldSecret, newSecret := getResourceChange("client_secret", d)
+		updateSecret, oldSecret, newSecret := util.GetResourceChange("client_secret", d)
 		if updateSecret {
 			err := um.ChangeSecret(id, oldSecret, newSecret)
 			if err != nil {

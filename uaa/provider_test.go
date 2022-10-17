@@ -112,13 +112,6 @@ func assertContains(str string, list []string) bool {
 	return false
 }
 
-func assertSame(actual interface{}, expected interface{}) error {
-	if actual != expected {
-		return fmt.Errorf("expected '%s' found '%s' ", expected, actual)
-	}
-	return nil
-}
-
 func assertEquals(attributes map[string]string,
 	key string, expected interface{}) error {
 	v, ok := attributes[key]

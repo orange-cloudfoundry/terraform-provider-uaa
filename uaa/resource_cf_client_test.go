@@ -55,7 +55,7 @@ func TestAccClient_normal(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			ProviderFactories: TestAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -89,7 +89,7 @@ func TestAccClient_scope(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			ProviderFactories: TestAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -113,7 +113,7 @@ func TestAccClient_createError(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
 			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			ProviderFactories: TestAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{

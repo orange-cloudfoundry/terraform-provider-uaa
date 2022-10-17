@@ -1,60 +1,19 @@
-package uaa
+package user
 
 import (
 	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
+	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 )
 
-func resourceUser() *schema.Resource {
-
-	return &schema.Resource{
-
-		Create: resourceUserCreate,
-		Read:   resourceUserRead,
-		Update: resourceUserUpdate,
-		Delete: resourceUserDelete,
-
-		Schema: map[string]*schema.Schema{
-
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"password": &schema.Schema{
-				Type:      schema.TypeString,
-				Optional:  true,
-				Sensitive: true,
-			},
-			"origin": &schema.Schema{
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Optional: true,
-				Default:  "uaa",
-			},
-			"given_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"family_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"email": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-			},
-			"groups": &schema.Schema{
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
-			},
-		},
-	}
+var Resource = &schema.Resource{
+	Schema: Schema,
+	Create: resourceUserCreate,
+	Read:   resourceUserRead,
+	Update: resourceUserUpdate,
+	Delete: resourceUserDelete,
 }
 
 func resourceUserCreate(d *schema.ResourceData, meta interface{}) error {
@@ -85,7 +44,9 @@ func resourceUserCreate(d *schema.ResourceData, meta interface{}) error {
 	session.Log.DebugMessage("New user created: %# v", user)
 
 	d.SetId(user.ID)
-	return resourceUserUpdate(d, NewResourceMeta{meta})
+	return resourceUserUpdate(d, uaa.NewResourceMeta{
+		Meta: meta,
+	})
 }
 
 func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
@@ -117,7 +78,7 @@ func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
 			groups = append(groups, g.Display)
 		}
 	}
-	d.Set("groups", schema.NewSet(resourceStringHash, groups))
+	d.Set("groups", schema.NewSet(util.ResourceStringHash, groups))
 
 	return nil
 }
@@ -129,8 +90,8 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 		session     *uaaapi.Session
 	)
 
-	if m, ok := meta.(NewResourceMeta); ok {
-		session = m.meta.(*uaaapi.Session)
+	if m, ok := meta.(uaa.NewResourceMeta); ok {
+		session = m.Meta.(*uaaapi.Session)
 		newResource = true
 	} else {
 		session = meta.(*uaaapi.Session)
@@ -146,13 +107,13 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	if !newResource {
 
 		updateUserDetail := false
-		u, _, name := getResourceChange("name", d)
+		u, _, name := util.GetResourceChange("name", d)
 		updateUserDetail = updateUserDetail || u
-		u, _, givenName := getResourceChange("given_name", d)
+		u, _, givenName := util.GetResourceChange("given_name", d)
 		updateUserDetail = updateUserDetail || u
-		u, _, familyName := getResourceChange("family_name", d)
+		u, _, familyName := util.GetResourceChange("family_name", d)
 		updateUserDetail = updateUserDetail || u
-		u, _, email := getResourceChange("email", d)
+		u, _, email := util.GetResourceChange("email", d)
 		updateUserDetail = updateUserDetail || u
 		if updateUserDetail {
 			user, err := um.UpdateUser(id, name, givenName, familyName, email)
@@ -162,7 +123,7 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 			session.Log.DebugMessage("User updated: %# v", user)
 		}
 
-		updatePassword, oldPassword, newPassword := getResourceChange("password", d)
+		updatePassword, oldPassword, newPassword := util.GetResourceChange("password", d)
 		if updatePassword {
 			err := um.ChangePassword(id, oldPassword, newPassword)
 			if err != nil {
@@ -173,7 +134,7 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	old, new := d.GetChange("groups")
-	rolesToDelete, rolesToAdd := getListChanges(old, new)
+	rolesToDelete, rolesToAdd := util.GetListChanges(old, new)
 
 	if len(rolesToDelete) > 0 || len(rolesToAdd) > 0 {
 		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, d.Get("origin").(string))

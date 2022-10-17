@@ -2,6 +2,7 @@ package uaa
 
 import (
 	"context"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/user"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -45,13 +46,13 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"uaa_user":   dataSourceUser(),
+			"uaa_user":   user.DataSource,
 			"uaa_client": dataSourceClient(),
 			"uaa_group":  dataSourceGroup(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"uaa_user":   resourceUser(),
+			"uaa_user":   user.Resource,
 			"uaa_client": resourceClient(),
 		},
 

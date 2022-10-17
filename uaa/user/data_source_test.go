@@ -1,7 +1,9 @@
-package uaa
+package user
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -23,11 +25,10 @@ func TestAccDataSourceUser_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { uaa.testAccPreCheck(t) },
+			ProviderFactories: uaa.testAccProvidersFactories,
 			Steps: []resource.TestStep{
-
-				resource.TestStep{
+				{
 					Config: userDataResource,
 					Check: resource.ComposeTestCheckFunc(
 						checkDataSourceUserExists(ref),
@@ -43,7 +44,7 @@ func checkDataSourceUserExists(resource string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 
-		session := testAccProvider.Meta().(*uaaapi.Session)
+		session := uaa.testAccProvider.Meta().(*uaaapi.Session)
 
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
@@ -66,7 +67,7 @@ func checkDataSourceUserExists(resource string) resource.TestCheckFunc {
 		if err != nil {
 			return err
 		}
-		if err := assertSame(id, user.ID); err != nil {
+		if err := util.AssertSame(user.ID, id); err != nil {
 			return err
 		}
 

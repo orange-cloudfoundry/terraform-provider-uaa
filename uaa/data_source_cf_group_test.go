@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 	"regexp"
 	"testing"
 )
@@ -84,7 +85,7 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 		if err != nil {
 			return err
 		}
-		if err := assertSame(id, group.ID); err != nil {
+		if err := util.AssertSame(group.ID, id); err != nil {
 			return err
 		}
 

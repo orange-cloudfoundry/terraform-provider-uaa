@@ -2,6 +2,7 @@ package uaa
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 	"regexp"
 	"testing"
 
@@ -91,7 +92,7 @@ func checkDataSourceClientExists(resource string) resource.TestCheckFunc {
 		if err != nil {
 			return err
 		}
-		if err := assertSame(id, client.ClientID); err != nil {
+		if err := util.AssertSame(client.ClientID, id); err != nil {
 			return err
 		}
 

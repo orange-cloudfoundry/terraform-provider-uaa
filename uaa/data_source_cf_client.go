@@ -2,6 +2,7 @@ package uaa
 
 import (
 	"fmt"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -23,37 +24,37 @@ func dataSourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"redirect_uri": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"scope": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"resource_ids": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"authorities": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"autoapprove": &schema.Schema{
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"access_token_validity": &schema.Schema{
 				Type:     schema.TypeInt,
@@ -67,7 +68,7 @@ func dataSourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
@@ -89,7 +90,7 @@ func dataSourceClient() *schema.Resource {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
-				Set:      resourceStringHash,
+				Set:      util.ResourceStringHash,
 			},
 		},
 	}
@@ -116,14 +117,14 @@ func dataSourceClientRead(d *schema.ResourceData, meta interface{}) (err error) 
 	}
 
 	d.SetId(client.ClientID)
-	d.Set("scope", schema.NewSet(resourceStringHash, toInterface(client.Scope)))
-	d.Set("authorities", schema.NewSet(resourceStringHash, toInterface(client.Authorities)))
-	d.Set("resource_ids", schema.NewSet(resourceStringHash, toInterface(client.ResourceIds)))
-	d.Set("authorized_grant_types", schema.NewSet(resourceStringHash, toInterface(client.AuthorizedGrantTypes)))
-	d.Set("redirect_uri", schema.NewSet(resourceStringHash, toInterface(client.RedirectURI)))
-	d.Set("autoapprove", schema.NewSet(resourceStringHash, toInterface(client.Autoapprove)))
-	d.Set("allowedproviders", schema.NewSet(resourceStringHash, toInterface(client.Allowedproviders)))
-	d.Set("required_user_groups", schema.NewSet(resourceStringHash, toInterface(client.RequiredUserGroups)))
+	d.Set("scope", schema.NewSet(util.ResourceStringHash, toInterface(client.Scope)))
+	d.Set("authorities", schema.NewSet(util.ResourceStringHash, toInterface(client.Authorities)))
+	d.Set("resource_ids", schema.NewSet(util.ResourceStringHash, toInterface(client.ResourceIds)))
+	d.Set("authorized_grant_types", schema.NewSet(util.ResourceStringHash, toInterface(client.AuthorizedGrantTypes)))
+	d.Set("redirect_uri", schema.NewSet(util.ResourceStringHash, toInterface(client.RedirectURI)))
+	d.Set("autoapprove", schema.NewSet(util.ResourceStringHash, toInterface(client.Autoapprove)))
+	d.Set("allowedproviders", schema.NewSet(util.ResourceStringHash, toInterface(client.Allowedproviders)))
+	d.Set("required_user_groups", schema.NewSet(util.ResourceStringHash, toInterface(client.RequiredUserGroups)))
 	d.Set("client_id", client.ClientID)
 	d.Set("access_token_validity", client.AccessTokenValidity)
 	d.Set("refresh_token_validity", client.RefreshTokenValidity)
