@@ -1,4 +1,4 @@
-package usertest
+package user
 
 import (
 	"code.cloudfoundry.org/cli/cf/errors"

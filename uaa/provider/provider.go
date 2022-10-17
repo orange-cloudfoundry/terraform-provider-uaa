@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/group"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user"
@@ -23,13 +24,13 @@ func Provider() *schema.Provider {
 var DataSources = map[string]*schema.Resource{
 	"uaa_user":   user.DataSource,
 	"uaa_client": uaa.DataSourceClient(),
-	"uaa_group":  uaa.DataSourceGroup(),
+	"uaa_group":  group.DataSource,
 }
 
 var Resources = map[string]*schema.Resource{
 	"uaa_user":   user.Resource,
 	"uaa_client": uaa.ResourceClient(),
-	"uaa_group":  uaa.ResourceGroup(),
+	"uaa_group":  group.Resource,
 }
 
 func configureContext(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {

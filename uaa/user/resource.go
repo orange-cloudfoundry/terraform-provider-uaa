@@ -11,7 +11,7 @@ import (
 )
 
 var Resource = &schema.Resource{
-	Schema:        Schema,
+	Schema:        userSchema,
 	CreateContext: createResource,
 	ReadContext:   readResource,
 	UpdateContext: updateResource,

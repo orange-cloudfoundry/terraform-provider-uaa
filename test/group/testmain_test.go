@@ -1,4 +1,4 @@
-package user
+package group
 
 import (
 	"github.com/terraform-providers/terraform-provider-uaa/test/util"

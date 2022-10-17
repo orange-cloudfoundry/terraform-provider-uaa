@@ -6,7 +6,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/util"
 )
 
-var Schema = map[string]*schema.Schema{
+var userSchema = map[string]*schema.Schema{
 
 	fields.Name.String(): {
 		Type:     schema.TypeString,
