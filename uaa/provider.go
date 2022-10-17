@@ -54,6 +54,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"uaa_user":   user.Resource,
 			"uaa_client": resourceClient(),
+			"uaa_group":  resourceGroup(),
 		},
 
 		ConfigureContextFunc: providerConfigure,

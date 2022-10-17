@@ -74,14 +74,15 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			resource, rs)
 
 		id := rs.Primary.ID
-		display_name := rs.Primary.Attributes["display_name"]
+		displayName := rs.Primary.Attributes["display_name"]
+		zoneId := rs.Primary.Attributes["zone_id"]
 
 		var (
 			err   error
-			group uaaapi.UAAGroup
+			group *uaaapi.UAAGroup
 		)
 
-		group, err = session.GroupManager().FindByDisplayName(display_name)
+		group, err = session.GroupManager().FindByDisplayName(displayName, zoneId)
 		if err != nil {
 			return err
 		}
