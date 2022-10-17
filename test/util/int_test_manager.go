@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 // TODO: figure out how to get uaa config path dependably and avoid passing it in
@@ -89,7 +90,7 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareUaaContainer(uaaConfigPa
 	req := testcontainers.ContainerRequest{
 		Image:        "cloudfoundry/uaa:76.0.0",
 		ExposedPorts: []string{"8080/tcp"},
-		WaitingFor:   wait.ForLog("Server startup in"),
+		WaitingFor:   wait.ForLog("Server startup in").WithStartupTimeout(time.Minute * 3),
 		Env: map[string]string{
 			"DB_HOST":         os.Getenv("DB_HOST"),
 			"DB_DATABASE":     os.Getenv("DB_DATABASE"),
