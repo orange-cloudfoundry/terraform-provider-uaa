@@ -10,7 +10,7 @@ import (
 
 var DataSource = &schema.Resource{
 	Schema:      dataSourceSchema,
-	ReadContext: dataSourceUserRead,
+	ReadContext: readDataSource,
 }
 
 var dataSourceSchema = map[string]*schema.Schema{
@@ -20,7 +20,7 @@ var dataSourceSchema = map[string]*schema.Schema{
 	},
 }
 
-func dataSourceUserRead(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
+func readDataSource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
 	session := i.(*uaaapi.Session)
 	if session == nil {

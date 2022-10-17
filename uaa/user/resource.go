@@ -1,76 +1,83 @@
 package user
 
 import (
-	"fmt"
+	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/user/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/util"
 )
 
 var Resource = &schema.Resource{
-	Schema: Schema,
-	Create: resourceUserCreate,
-	Read:   resourceUserRead,
-	Update: resourceUserUpdate,
-	Delete: resourceUserDelete,
+	Schema:        Schema,
+	CreateContext: createResource,
+	ReadContext:   readResource,
+	UpdateContext: updateResource,
+	DeleteContext: deleteResource,
 }
 
-func resourceUserCreate(d *schema.ResourceData, meta interface{}) error {
+func createResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := meta.(*uaaapi.Session)
+	session := i.(*uaaapi.Session)
 	if session == nil {
-		return fmt.Errorf("client is nil")
+		return diag.Errorf("client is nil")
 	}
 
-	name := d.Get("name").(string)
-	password := d.Get("password").(string)
-	origin := d.Get("origin").(string)
-	givenName := d.Get("given_name").(string)
-	familyName := d.Get("family_name").(string)
+	name := data.Get(fields.Name.String()).(string)
+	password := data.Get(fields.Password.String()).(string)
+	origin := data.Get(fields.Origin.String()).(string)
+	givenName := data.Get(fields.GivenName.String()).(string)
+	familyName := data.Get(fields.FamilyName.String()).(string)
 
 	email := name
-	if val, ok := d.GetOk("email"); ok {
+	if val, ok := data.GetOk(fields.Email.String()); ok {
 		email = val.(string)
 	} else {
-		d.Set("email", email)
+		data.Set(fields.Email.String(), email)
 	}
 
 	um := session.UserManager()
 	user, err := um.CreateUser(name, password, origin, givenName, familyName, email)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	session.Log.DebugMessage("New user created: %# v", user)
 
-	d.SetId(user.ID)
-	return resourceUserUpdate(d, uaa.NewResourceMeta{
-		Meta: meta,
+	data.SetId(user.ID)
+	diagErr := updateResource(ctx, data, uaa.NewResourceMeta{
+		Meta: i,
 	})
+	if diagErr != nil {
+		return diagErr
+	}
+
+	return nil
 }
 
-func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
+func readResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := meta.(*uaaapi.Session)
+	session := i.(*uaaapi.Session)
 	if session == nil {
-		return fmt.Errorf("client is nil")
+		return diag.Errorf("client is nil")
 	}
 
 	um := session.UserManager()
-	id := d.Id()
+	id := data.Id()
 
 	user, err := um.GetUser(id)
 	if err != nil {
-		d.SetId("")
-		return err
+		data.SetId("")
+		return diag.FromErr(err)
 	}
 	session.Log.DebugMessage("User with GUID '%s' retrieved: %# v", id, user)
 
-	d.Set("name", user.Username)
-	d.Set("origin", user.Origin)
-	d.Set("given_name", user.Name.GivenName)
-	d.Set("family_name", user.Name.FamilyName)
-	d.Set("email", user.Emails[0].Value)
+	data.Set(fields.Name.String(), user.Username)
+	data.Set(fields.Origin.String(), user.Origin)
+	data.Set(fields.GivenName.String(), user.Name.GivenName)
+	data.Set(fields.FamilyName.String(), user.Name.FamilyName)
+	data.Set(fields.Email.String(), user.Emails[0].Value)
 
 	var groups []interface{}
 	for _, g := range user.Groups {
@@ -78,84 +85,84 @@ func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
 			groups = append(groups, g.Display)
 		}
 	}
-	d.Set("groups", schema.NewSet(util.ResourceStringHash, groups))
+	data.Set(fields.Groups.String(), schema.NewSet(util.ResourceStringHash, groups))
 
 	return nil
 }
 
-func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
+func updateResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
 	var (
 		newResource bool
 		session     *uaaapi.Session
 	)
 
-	if m, ok := meta.(uaa.NewResourceMeta); ok {
+	if m, ok := i.(uaa.NewResourceMeta); ok {
 		session = m.Meta.(*uaaapi.Session)
 		newResource = true
 	} else {
-		session = meta.(*uaaapi.Session)
+		session = i.(*uaaapi.Session)
 		if session == nil {
-			return fmt.Errorf("client is nil")
+			return diag.Errorf("client is nil")
 		}
 		newResource = false
 	}
 
-	id := d.Id()
+	id := data.Id()
 	um := session.UserManager()
 
 	if !newResource {
 
 		updateUserDetail := false
-		u, _, name := util.GetResourceChange("name", d)
+		u, _, name := util.GetResourceChange(fields.Name.String(), data)
 		updateUserDetail = updateUserDetail || u
-		u, _, givenName := util.GetResourceChange("given_name", d)
+		u, _, givenName := util.GetResourceChange(fields.GivenName.String(), data)
 		updateUserDetail = updateUserDetail || u
-		u, _, familyName := util.GetResourceChange("family_name", d)
+		u, _, familyName := util.GetResourceChange(fields.FamilyName.String(), data)
 		updateUserDetail = updateUserDetail || u
-		u, _, email := util.GetResourceChange("email", d)
+		u, _, email := util.GetResourceChange(fields.Email.String(), data)
 		updateUserDetail = updateUserDetail || u
 		if updateUserDetail {
 			user, err := um.UpdateUser(id, name, givenName, familyName, email)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			}
 			session.Log.DebugMessage("User updated: %# v", user)
 		}
 
-		updatePassword, oldPassword, newPassword := util.GetResourceChange("password", d)
+		updatePassword, oldPassword, newPassword := util.GetResourceChange("password", data)
 		if updatePassword {
 			err := um.ChangePassword(id, oldPassword, newPassword)
 			if err != nil {
-				return err
+				return diag.FromErr(err)
 			}
 			session.Log.DebugMessage("Password for user with id '%s' and name %s' updated.", id, name)
 		}
 	}
 
-	old, new := d.GetChange("groups")
-	rolesToDelete, rolesToAdd := util.GetListChanges(old, new)
+	oldUser, newUser := data.GetChange(fields.Groups.String())
+	rolesToDelete, rolesToAdd := util.GetListChanges(oldUser, newUser)
 
 	if len(rolesToDelete) > 0 || len(rolesToAdd) > 0 {
-		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, d.Get("origin").(string))
+		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, data.Get(fields.Origin.String()).(string))
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	}
 
 	return nil
 }
 
-func resourceUserDelete(d *schema.ResourceData, meta interface{}) error {
+func deleteResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	session := meta.(*uaaapi.Session)
+	session := i.(*uaaapi.Session)
 	if session == nil {
-		return fmt.Errorf("client is nil")
+		return diag.Errorf("client is nil")
 	}
 
-	id := d.Id()
+	id := data.Id()
 	um := session.UserManager()
-	um.DeleteUser(id) //nolint error is authorized here to allow not existing to be deleted without error
+	_ = um.DeleteUser(id)
 
 	return nil
 }
