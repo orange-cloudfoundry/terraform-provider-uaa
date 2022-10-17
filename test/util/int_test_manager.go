@@ -42,9 +42,9 @@ func newIntegrationTestManager(uaaConfigPath string) *UaaIntegrationTestManager 
 	uaaTestManager := &UaaIntegrationTestManager{context: ctx}
 	uaaTestManager.prepareEnvironment()
 	uaaTestManager.prepareDbContainer()
-	defer uaaTestManager.dbContainer.Terminate(ctx)
+	//defer uaaTestManager.dbContainer.Terminate(ctx)	// would defer cleanup here if not using reaper (ryuk)
 	uaaTestManager.prepareUaaContainer(uaaConfigPath)
-	defer uaaTestManager.uaaContainer.Terminate(ctx)
+	//defer uaaTestManager.uaaContainer.Terminate(ctx)	// would defer cleanup here if not using reaper (ryuk)
 	uaaTestManager.createTestIdentityZone()
 	uaaTestManager.prepareProviderFactories()
 
