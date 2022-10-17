@@ -1,7 +1,8 @@
-package uaatest
+package util
 
 import (
 	"context"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
@@ -9,25 +10,27 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 )
 
-var TestManager *UaaTestManager
+// TODO: figure out how to get uaa config path dependably and avoid passing it in
+// TODO: figure out how to use same containers when running tests for multiple packages
 
-func TestMain(m *testing.M) {
-	TestManager = NewUaaTestManager()
+var IntegrationTestManager *UaaIntegrationTestManager
+
+func RunIntegrationTests(m *testing.M, uaaConfigPath string) {
+	IntegrationTestManager = newIntegrationTestManager(uaaConfigPath)
 
 	log.Println("Running tests...")
 	exitCode := m.Run()
 
-	TestManager.Destroy()
+	IntegrationTestManager.destroy()
 
 	os.Exit(exitCode)
 }
 
-type UaaTestManager struct {
+type UaaIntegrationTestManager struct {
 	context           context.Context
 	dbContainer       testcontainers.Container
 	uaaContainer      testcontainers.Container
@@ -35,20 +38,20 @@ type UaaTestManager struct {
 	ProviderFactories map[string]func() (*schema.Provider, error)
 }
 
-func NewUaaTestManager() *UaaTestManager {
+func newIntegrationTestManager(uaaConfigPath string) *UaaIntegrationTestManager {
 	context := context.Background()
 
-	uaaTestManager := &UaaTestManager{context: context}
-	uaaTestManager.PrepareEnvironment()
-	uaaTestManager.PrepareDbContainer()
-	uaaTestManager.PrepareUaaContainer()
-	uaaTestManager.CreateTestIdentityZone()
-	uaaTestManager.PrepareProviderFactories()
+	uaaTestManager := &UaaIntegrationTestManager{context: context}
+	uaaTestManager.prepareEnvironment()
+	uaaTestManager.prepareDbContainer()
+	uaaTestManager.prepareUaaContainer(uaaConfigPath)
+	uaaTestManager.createTestIdentityZone()
+	uaaTestManager.prepareProviderFactories()
 
 	return uaaTestManager
 }
 
-func (uaaTestManager *UaaTestManager) PrepareEnvironment() {
+func (uaaTestManager *UaaIntegrationTestManager) prepareEnvironment() {
 	log.Println("Preparing test environment...")
 
 	os.Setenv("DB_DATABASE", "uaa")
@@ -57,7 +60,7 @@ func (uaaTestManager *UaaTestManager) PrepareEnvironment() {
 	os.Setenv("UAA_CONFIG_PATH", "/uaa")
 }
 
-func (uaaTestManager *UaaTestManager) PrepareDbContainer() {
+func (uaaTestManager *UaaIntegrationTestManager) prepareDbContainer() {
 	log.Println("Preparing test db container...")
 
 	req := testcontainers.ContainerRequest{
@@ -71,7 +74,7 @@ func (uaaTestManager *UaaTestManager) PrepareDbContainer() {
 		WaitingFor: wait.ForLog("database system is ready to accept connections"),
 	}
 
-	uaaTestManager.dbContainer = uaaTestManager.PrepareContainer(req)
+	uaaTestManager.dbContainer = uaaTestManager.prepareContainer(req)
 
 	ip, err := uaaTestManager.dbContainer.ContainerIP(uaaTestManager.context)
 	if err != nil {
@@ -80,13 +83,8 @@ func (uaaTestManager *UaaTestManager) PrepareDbContainer() {
 	os.Setenv("DB_HOST", ip)
 }
 
-func (uaaTestManager *UaaTestManager) PrepareUaaContainer() {
+func (uaaTestManager *UaaIntegrationTestManager) prepareUaaContainer(uaaConfigPath string) {
 	log.Println("Preparing test uaa container...")
-
-	configPath, err := filepath.Abs("../testresources/uaa.yml")
-	if err != nil {
-		log.Fatal("Unable to load UAA config file")
-	}
 
 	req := testcontainers.ContainerRequest{
 		Image:        "cloudfoundry/uaa:76.0.0",
@@ -100,11 +98,11 @@ func (uaaTestManager *UaaTestManager) PrepareUaaContainer() {
 			"UAA_CONFIG_PATH": os.Getenv("UAA_CONFIG_PATH"),
 		},
 		Mounts: testcontainers.Mounts(
-			testcontainers.BindMount(configPath, "/uaa/uaa.yml"),
+			testcontainers.BindMount(uaaConfigPath, "/uaa/uaa.yml"),
 		),
 	}
 
-	uaaTestManager.uaaContainer = uaaTestManager.PrepareContainer(req)
+	uaaTestManager.uaaContainer = uaaTestManager.prepareContainer(req)
 
 	endpoint, err := uaaTestManager.uaaContainer.Endpoint(uaaTestManager.context, "8080")
 	if err != nil {
@@ -120,7 +118,7 @@ func (uaaTestManager *UaaTestManager) PrepareUaaContainer() {
 	os.Setenv("UAA_SKIP_SSL_VALIDATION", "1")
 }
 
-func (uaaTestManager *UaaTestManager) CreateTestIdentityZone() {
+func (uaaTestManager *UaaIntegrationTestManager) createTestIdentityZone() {
 	log.Println("Creating additional test identity zone...")
 
 	cmd := []string{
@@ -137,7 +135,7 @@ func (uaaTestManager *UaaTestManager) CreateTestIdentityZone() {
 	}
 }
 
-func (uaaTestManager *UaaTestManager) PrepareContainer(req testcontainers.ContainerRequest) (container testcontainers.Container) {
+func (uaaTestManager *UaaIntegrationTestManager) prepareContainer(req testcontainers.ContainerRequest) (container testcontainers.Container) {
 	container, err := testcontainers.GenericContainer(
 		uaaTestManager.context,
 		testcontainers.GenericContainerRequest{
@@ -145,13 +143,14 @@ func (uaaTestManager *UaaTestManager) PrepareContainer(req testcontainers.Contai
 			Started:          true,
 		})
 	if err != nil {
+		log.Println(fmt.Sprintf("Error: %s", err))
 		log.Fatal("Unable to start container using image: " + req.Image)
 	}
 
 	return container
 }
 
-func (uaaTestManager *UaaTestManager) PrepareProviderFactories() {
+func (uaaTestManager *UaaIntegrationTestManager) prepareProviderFactories() {
 	log.Println("Preparing provider factories...")
 
 	uaaTestManager.uaaProvider = provider.Provider()
@@ -163,13 +162,13 @@ func (uaaTestManager *UaaTestManager) PrepareProviderFactories() {
 	}
 }
 
-func (uaaTestManager *UaaTestManager) Destroy() {
+func (uaaTestManager *UaaIntegrationTestManager) destroy() {
 	log.Println("Terminating docker containers...")
 
 	defer uaaTestManager.uaaContainer.Terminate(uaaTestManager.context)
 	defer uaaTestManager.dbContainer.Terminate(uaaTestManager.context)
 }
 
-func (uaaTestManager *UaaTestManager) UaaSession() *uaaapi.Session {
+func (uaaTestManager *UaaIntegrationTestManager) UaaSession() *uaaapi.Session {
 	return uaaTestManager.uaaProvider.Meta().(*uaaapi.Session)
 }

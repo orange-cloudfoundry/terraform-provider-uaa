@@ -1,9 +1,10 @@
-package uaatest
+package test
 
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/terraform-providers/terraform-provider-uaa/test/util"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"regexp"
 	"testing"
@@ -26,8 +27,7 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			//PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestManager.ProviderFactories,
+			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config: groupDataResource,
@@ -46,8 +46,7 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 func TestGroupDataSourceClient_notFound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			//PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestManager.ProviderFactories,
+			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      groupDataResourceNotFound,
@@ -66,7 +65,7 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
-		TestManager.UaaSession().Log.DebugMessage(
+		util.IntegrationTestManager.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
@@ -79,11 +78,11 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			group *uaaapi.UAAGroup
 		)
 
-		group, err = TestManager.UaaSession().GroupManager().FindByDisplayName(displayName, zoneId)
+		group, err = util.IntegrationTestManager.UaaSession().GroupManager().FindByDisplayName(displayName, zoneId)
 		if err != nil {
 			return err
 		}
-		if err := AssertSame(group.ID, id); err != nil {
+		if err := util.AssertSame(group.ID, id); err != nil {
 			return err
 		}
 

@@ -1,14 +1,13 @@
-package uaatest
+package test
 
 import (
 	"fmt"
-	"regexp"
-	"testing"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
+	"github.com/terraform-providers/terraform-provider-uaa/test/util"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"regexp"
+	"testing"
 )
 
 const clientDataResource = `
@@ -27,15 +26,14 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 	ref := "data.uaa_client.admin-client"
 	resource.Test(t,
 		resource.TestCase{
-			//PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestManager.ProviderFactories,
+			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config: clientDataResource,
 					Check: resource.ComposeTestCheckFunc(
 						checkDataSourceClientExists(ref),
 						resource.TestCheckResourceAttr(ref, "client_id", "admin"),
-						testCheckResourceSet(ref, "authorities", []string{
+						util.TestCheckResourceSet(ref, "authorities", []string{
 							"clients.read",
 							"clients.secret",
 							"clients.write",
@@ -53,8 +51,7 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 func TestAccDataSourceClient_notfound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			//PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestManager.ProviderFactories,
+			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config:      clientDataResourceNotFound,
@@ -73,7 +70,7 @@ func checkDataSourceClientExists(resource string) resource.TestCheckFunc {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
-		TestManager.UaaSession().Log.DebugMessage(
+		util.IntegrationTestManager.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
@@ -85,11 +82,11 @@ func checkDataSourceClientExists(resource string) resource.TestCheckFunc {
 			client uaaapi.UAAClient
 		)
 
-		client, err = TestManager.UaaSession().ClientManager().FindByClientID(client_id)
+		client, err = util.IntegrationTestManager.UaaSession().ClientManager().FindByClientID(client_id)
 		if err != nil {
 			return err
 		}
-		if err := AssertSame(client.ClientID, id); err != nil {
+		if err := util.AssertSame(client.ClientID, id); err != nil {
 			return err
 		}
 
