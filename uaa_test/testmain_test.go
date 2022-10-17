@@ -14,10 +14,10 @@ import (
 	"testing"
 )
 
-var TestManager UaaTestManager
+var TestManager *UaaTestManager
 
 func TestMain(m *testing.M) {
-	TestManager := NewUaaTestManager()
+	TestManager = NewUaaTestManager()
 
 	log.Println("Running tests...")
 	exitCode := m.Run()
