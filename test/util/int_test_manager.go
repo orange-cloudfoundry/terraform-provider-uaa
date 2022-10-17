@@ -25,8 +25,6 @@ func RunIntegrationTests(m *testing.M, uaaConfigPath string) {
 	log.Println("Running tests...")
 	exitCode := m.Run()
 
-	IntegrationTestManager.destroy()
-
 	os.Exit(exitCode)
 }
 
