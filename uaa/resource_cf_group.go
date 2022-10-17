@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/terraform-providers/terraform-provider-uaa/util"
 )
 
-func resourceGroup() *schema.Resource {
+func ResourceGroup() *schema.Resource {
 
 	return &schema.Resource{
 		Create: resourceGroupCreate,
@@ -90,11 +91,11 @@ func resourceGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	id := d.Id()
 	gm := session.GroupManager()
 	updateGroup := false
-	changed, _, displayName := getResourceChange("display_name", d)
+	changed, _, displayName := util.GetResourceChange("display_name", d)
 	updateGroup = updateGroup || changed
-	changed, _, description := getResourceChange("description", d)
+	changed, _, description := util.GetResourceChange("description", d)
 	updateGroup = updateGroup || changed
-	changed, _, zoneId := getResourceChange("zone_id", d)
+	changed, _, zoneId := util.GetResourceChange("zone_id", d)
 	updateGroup = updateGroup || changed
 
 	if updateGroup {

@@ -1,11 +1,10 @@
-package uaa
+package uaa_test
 
 import (
 	"code.cloudfoundry.org/cli/cf/errors"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"regexp"
 	"testing"
 )
@@ -36,8 +35,8 @@ func createTestGroupResource(displayName, description, zoneId string) string {
 func TestGroupResource_normal(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			CheckDestroy:      testAccCheckGroupDestroy(originalDisplayName, updatedZoneId),
 			Steps: []resource.TestStep{
 				{
@@ -87,8 +86,8 @@ func TestGroupResource_normal(t *testing.T) {
 func TestGroupResource_createError(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			CheckDestroy:      testAccCheckGroupDestroy(ref, defaultZoneId),
 			Steps: []resource.TestStep{
 				{
@@ -101,8 +100,7 @@ func TestGroupResource_createError(t *testing.T) {
 
 func testAccCheckGroupDestroy(id, zoneId string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		session := testAccProvider.Meta().(*uaaapi.Session)
-		gm := session.GroupManager()
+		gm := TestManager.UaaSession().GroupManager()
 		if _, err := gm.FindByDisplayName(id, zoneId); err != nil {
 			switch err.(type) {
 			case *errors.ModelNotFoundError:

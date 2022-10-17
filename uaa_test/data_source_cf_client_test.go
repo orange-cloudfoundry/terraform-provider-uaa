@@ -1,4 +1,4 @@
-package uaa
+package uaa_test
 
 import (
 	"fmt"
@@ -28,8 +28,8 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 	ref := "data.uaa_client.admin-client"
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config: clientDataResource,
@@ -54,8 +54,8 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 func TestAccDataSourceClient_notfound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				resource.TestStep{
 					Config:      clientDataResourceNotFound,
@@ -69,14 +69,12 @@ func checkDataSourceClientExists(resource string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 
-		session := testAccProvider.Meta().(*uaaapi.Session)
-
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
-		session.Log.DebugMessage(
+		TestManager.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
@@ -88,7 +86,7 @@ func checkDataSourceClientExists(resource string) resource.TestCheckFunc {
 			client uaaapi.UAAClient
 		)
 
-		client, err = session.ClientManager().FindByClientID(client_id)
+		client, err = TestManager.UaaSession().ClientManager().FindByClientID(client_id)
 		if err != nil {
 			return err
 		}

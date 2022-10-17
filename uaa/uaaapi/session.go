@@ -27,17 +27,25 @@ type Session struct {
 	groupManager  *GroupManager
 }
 
-// uaaErrorResponse -
+type Config struct {
+	LoginEndpoint     string
+	AuthEndpoint      string
+	ClientID          string
+	ClientSecret      string
+	CaCert            string
+	SkipSslValidation bool
+}
+
+func (config *Config) Client() (*Session, error) {
+	return NewSession(config)
+}
+
 type uaaErrorResponse struct {
 	Code        string `json:"error"`
 	Description string `json:"error_description"`
 }
 
-// NewSession -
-func NewSession(
-	uaaLoginEndpoint, uaaAuthEndpoint,
-	uaaClientID, uaaClientSecret, caCert string,
-	skipSslValidation bool) (s *Session, err error) {
+func NewSession(config *Config) (s *Session, err error) {
 
 	s = &Session{}
 
@@ -55,10 +63,10 @@ func NewSession(
 	if i18n.T == nil {
 		i18n.T = i18n.Init(s.config)
 	}
-	s.config.SetSSLDisabled(skipSslValidation)
+	s.config.SetSSLDisabled(config.SkipSslValidation)
 
-	s.config.SetAuthenticationEndpoint(endpointAsURL(uaaLoginEndpoint))
-	s.config.SetUaaEndpoint(endpointAsURL(uaaAuthEndpoint))
+	s.config.SetAuthenticationEndpoint(endpointAsURL(config.LoginEndpoint))
+	s.config.SetUaaEndpoint(endpointAsURL(config.AuthEndpoint))
 
 	s.uaaGateway = net.NewUAAGateway(s.config, s.Log.UI, s.Log.TracePrinter, envDialTimeout)
 	s.authManager = NewAuthManager(s.uaaGateway, s.config, net.NewRequestDumper(s.Log.TracePrinter))
@@ -79,7 +87,7 @@ func NewSession(
 		return nil, err
 	}
 
-	if s.userManager.clientToken, err = s.authManager.GetClientToken(uaaClientID, uaaClientSecret); err == nil {
+	if s.userManager.clientToken, err = s.authManager.GetClientToken(config.ClientID, config.ClientSecret); err == nil {
 		err = s.userManager.loadGroups()
 	}
 

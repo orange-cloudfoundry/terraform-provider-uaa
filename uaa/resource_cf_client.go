@@ -9,7 +9,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
-func resourceClient() *schema.Resource {
+func ResourceClient() *schema.Resource {
 
 	return &schema.Resource{
 		Create: resourceClientCreate,

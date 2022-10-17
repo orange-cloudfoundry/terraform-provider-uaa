@@ -1,6 +1,10 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+)
+
+// Assertions
 
 func AssertSame(expected interface{}, actual interface{}) error {
 	if actual != expected {

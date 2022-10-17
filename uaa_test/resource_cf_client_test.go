@@ -1,15 +1,12 @@
-package uaa
+package uaa_test
 
 import (
-	"fmt"
-	"regexp"
-	"testing"
-
 	"code.cloudfoundry.org/cli/cf/errors"
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"regexp"
+	"testing"
 )
 
 const clientResource = `
@@ -54,8 +51,8 @@ func TestAccClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -88,8 +85,8 @@ func TestAccClient_scope(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -112,8 +109,8 @@ func TestAccClient_createError(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: TestAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -127,14 +124,13 @@ func TestAccClient_createError(t *testing.T) {
 func testAccCheckValidSecret(resource, secret string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 
-		session := testAccProvider.Meta().(*uaaapi.Session)
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
 		id := rs.Primary.ID
-		auth := session.AuthManager()
+		auth := TestManager.UaaSession().AuthManager()
 		if _, err := auth.GetClientToken(id, secret); err != nil {
 			return err
 		}
@@ -144,15 +140,14 @@ func testAccCheckValidSecret(resource, secret string) resource.TestCheckFunc {
 
 func testAccCheckClientExists(resource string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		session := testAccProvider.Meta().(*uaaapi.Session)
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
-		session.Log.DebugMessage("terraform state for resource '%s': %# v", resource, rs)
+		TestManager.UaaSession().Log.DebugMessage("terraform state for resource '%s': %# v", resource, rs)
 
 		id := rs.Primary.ID
-		um := session.ClientManager()
+		um := TestManager.UaaSession().ClientManager()
 
 		// check client exists
 		_, err := um.GetClient(id)
@@ -177,8 +172,7 @@ func testCheckResourceSet(ref string, attr string, values []string) resource.Tes
 
 func testAccCheckClientDestroy(id string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		session := testAccProvider.Meta().(*uaaapi.Session)
-		um := session.ClientManager()
+		um := TestManager.UaaSession().ClientManager()
 		if _, err := um.FindByClientID(id); err != nil {
 			switch err.(type) {
 			case *errors.ModelNotFoundError:

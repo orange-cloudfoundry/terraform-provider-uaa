@@ -1,7 +1,10 @@
-package uaa
+package uaa_test
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-providers/terraform-provider-uaa/provider"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
@@ -11,21 +14,25 @@ import (
 	"testing"
 )
 
+var TestManager UaaTestManager
+
 func TestMain(m *testing.M) {
-	uaaTestManager := NewUaaTestManager()
+	TestManager := NewUaaTestManager()
 
 	log.Println("Running tests...")
 	exitCode := m.Run()
 
-	uaaTestManager.Destroy()
+	TestManager.Destroy()
 
 	os.Exit(exitCode)
 }
 
 type UaaTestManager struct {
-	context      context.Context
-	dbContainer  testcontainers.Container
-	uaaContainer testcontainers.Container
+	context           context.Context
+	dbContainer       testcontainers.Container
+	uaaContainer      testcontainers.Container
+	uaaProvider       *schema.Provider
+	ProviderFactories map[string]func() (*schema.Provider, error)
 }
 
 func NewUaaTestManager() *UaaTestManager {
@@ -36,6 +43,7 @@ func NewUaaTestManager() *UaaTestManager {
 	uaaTestManager.PrepareDbContainer()
 	uaaTestManager.PrepareUaaContainer()
 	uaaTestManager.CreateTestIdentityZone()
+	uaaTestManager.PrepareProviderFactories()
 
 	return uaaTestManager
 }
@@ -113,7 +121,7 @@ func (uaaTestManager *UaaTestManager) PrepareUaaContainer() {
 }
 
 func (uaaTestManager *UaaTestManager) CreateTestIdentityZone() {
-	// TODO: can we create the additional identity zone via `uaa.yml` instead?
+	log.Println("Creating additional test identity zone...")
 
 	cmd := []string{
 		"psql",
@@ -143,9 +151,25 @@ func (uaaTestManager *UaaTestManager) PrepareContainer(req testcontainers.Contai
 	return container
 }
 
+func (uaaTestManager *UaaTestManager) PrepareProviderFactories() {
+	log.Println("Preparing provider factories...")
+
+	uaaTestManager.uaaProvider = provider.Provider()
+
+	uaaTestManager.ProviderFactories = map[string]func() (*schema.Provider, error){
+		"uaa": func() (*schema.Provider, error) {
+			return uaaTestManager.uaaProvider, nil
+		},
+	}
+}
+
 func (uaaTestManager *UaaTestManager) Destroy() {
 	log.Println("Terminating docker containers...")
 
 	defer uaaTestManager.uaaContainer.Terminate(uaaTestManager.context)
 	defer uaaTestManager.dbContainer.Terminate(uaaTestManager.context)
+}
+
+func (uaaTestManager *UaaTestManager) UaaSession() *uaaapi.Session {
+	return uaaTestManager.uaaProvider.Meta().(*uaaapi.Session)
 }

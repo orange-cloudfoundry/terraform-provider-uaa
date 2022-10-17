@@ -1,4 +1,4 @@
-package uaa
+package uaa_test
 
 import (
 	"fmt"
@@ -27,8 +27,8 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config: groupDataResource,
@@ -47,8 +47,8 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 func TestGroupDataSourceClient_notFound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			PreCheck:          func() { testAccPreCheck(t) },
-			ProviderFactories: testAccProvidersFactories,
+			//PreCheck:          func() { testAccPreCheck(t) },
+			ProviderFactories: TestManager.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      groupDataResourceNotFound,
@@ -62,14 +62,12 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
 
-		session := testAccProvider.Meta().(*uaaapi.Session)
-
 		rs, ok := s.RootModule().Resources[resource]
 		if !ok {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
-		session.Log.DebugMessage(
+		TestManager.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
@@ -82,7 +80,7 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			group *uaaapi.UAAGroup
 		)
 
-		group, err = session.GroupManager().FindByDisplayName(displayName, zoneId)
+		group, err = TestManager.UaaSession().GroupManager().FindByDisplayName(displayName, zoneId)
 		if err != nil {
 			return err
 		}

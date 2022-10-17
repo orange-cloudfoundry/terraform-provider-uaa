@@ -6,7 +6,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
-func dataSourceGroup() *schema.Resource {
+func DataSourceGroup() *schema.Resource {
 
 	return &schema.Resource{
 

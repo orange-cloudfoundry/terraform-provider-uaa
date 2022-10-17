@@ -9,7 +9,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 )
 
-func dataSourceClient() *schema.Resource {
+func DataSourceClient() *schema.Resource {
 
 	return &schema.Resource{
 
