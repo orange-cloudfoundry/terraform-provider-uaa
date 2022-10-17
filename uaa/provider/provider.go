@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user"
 )
@@ -33,12 +34,12 @@ var Resources = map[string]*schema.Resource{
 
 func configureContext(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	config := uaaapi.Config{
-		LoginEndpoint:     d.Get("login_endpoint").(string),
-		AuthEndpoint:      d.Get("auth_endpoint").(string),
-		ClientID:          d.Get("client_id").(string),
-		ClientSecret:      d.Get("client_secret").(string),
-		CaCert:            d.Get("ca_cert").(string),
-		SkipSslValidation: d.Get("skip_ssl_validation").(bool),
+		LoginEndpoint:     d.Get(fields.LoginEndpoint.String()).(string),
+		AuthEndpoint:      d.Get(fields.AuthEndpoint.String()).(string),
+		ClientID:          d.Get(fields.ClientId.String()).(string),
+		ClientSecret:      d.Get(fields.ClientSecret.String()).(string),
+		CaCert:            d.Get(fields.CaCert.String()).(string),
+		SkipSslValidation: d.Get(fields.SkipSslValidation.String()).(bool),
 	}
 	client, err := config.Client()
 	if err != nil {

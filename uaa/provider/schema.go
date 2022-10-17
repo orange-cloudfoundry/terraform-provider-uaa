@@ -1,34 +1,37 @@
 package provider
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
+)
 
 var Schema = map[string]*schema.Schema{
-	"login_endpoint": {
+	fields.LoginEndpoint.String(): {
 		Type:        schema.TypeString,
 		Required:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_LOGIN_URL", ""),
 	},
-	"auth_endpoint": {
+	fields.AuthEndpoint.String(): {
 		Type:        schema.TypeString,
 		Required:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_AUTH_URL", ""),
 	},
-	"client_id": {
+	fields.ClientId.String(): {
 		Type:        schema.TypeString,
 		Optional:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_CLIENT_ID", ""),
 	},
-	"client_secret": {
+	fields.ClientSecret.String(): {
 		Type:        schema.TypeString,
 		Optional:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_CLIENT_SECRET", ""),
 	},
-	"ca_cert": {
+	fields.CaCert.String(): {
 		Type:        schema.TypeString,
 		Required:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_CA_CERT", ""),
 	},
-	"skip_ssl_validation": {
+	fields.SkipSslValidation.String(): {
 		Type:        schema.TypeBool,
 		Required:    true,
 		DefaultFunc: schema.EnvDefaultFunc("UAA_SKIP_SSL_VALIDATION", "true"),
