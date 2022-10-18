@@ -3,7 +3,6 @@ package identityzone
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/configfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
@@ -53,19 +52,7 @@ var Schema = map[string]*schema.Schema{
 			Schema: SamlConfigSchema,
 		},
 	},
-	fields.Config.String(): {
-		Type:     schema.TypeList,
-		Required: true,
-		MinItems: 1,
-		MaxItems: 1,
-		Elem: &schema.Resource{
-			Schema: ConfigSchema,
-		},
-	},
-}
-
-var ConfigSchema = map[string]*schema.Schema{
-	configfields.TokenPolicy.String(): {
+	fields.TokenPolicy.String(): {
 		Type:     schema.TypeList,
 		Optional: true,
 		MaxItems: 1,

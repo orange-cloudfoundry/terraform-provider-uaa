@@ -4,7 +4,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/configfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfignames"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
@@ -16,19 +15,13 @@ import (
 func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) {
 
 	data.SetId(identityZone.Id)
-	data.Set(fields.Config.String(), mapIdentityZoneConfig(&identityZone.Config))
 	data.Set(fields.IsActive.String(), identityZone.IsActive)
 	data.Set(fields.Name.String(), identityZone.Name)
 	data.Set(fields.SubDomain.String(), identityZone.SubDomain)
 	data.Set(fields.ClientSecretPolicy.String(), mapIdentityZoneClientSecretPolicy(&identityZone.Config.ClientSecretPolicy))
 	data.Set(fields.CorsConfig.String(), mapIdentityZoneCorsPolicy(&identityZone.Config.CorsPolicy))
 	data.Set(fields.SamlConfig.String(), mapIdentityZoneSamlConfig(&identityZone.Config.Saml))
-}
-
-func mapIdentityZoneConfig(data *api.IdentityZoneConfig) []map[string]interface{} {
-	return []map[string]interface{}{{
-		configfields.TokenPolicy.String(): mapIdentityZoneTokenPolicy(&data.TokenPolicy),
-	}}
+	data.Set(fields.TokenPolicy.String(), mapIdentityZoneTokenPolicy(&identityZone.Config.TokenPolicy))
 }
 
 func mapIdentityZoneCorsPolicy(data *api.IdentityZoneCorsPolicy) []map[string]interface{} {

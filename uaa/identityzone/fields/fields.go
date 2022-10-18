@@ -4,21 +4,19 @@ type IdentityZoneField int64
 
 const (
 	ClientSecretPolicy IdentityZoneField = iota
-	Config
 	CorsConfig
 	Id
 	IsActive
 	Name
 	SamlConfig
 	SubDomain
+	TokenPolicy
 )
 
 func (s IdentityZoneField) String() string {
 	switch s {
 	case ClientSecretPolicy:
 		return "client_secret_policy"
-	case Config:
-		return "config"
 	case CorsConfig:
 		return "cors_config"
 	case Id:
@@ -31,6 +29,8 @@ func (s IdentityZoneField) String() string {
 		return "saml_config"
 	case SubDomain:
 		return "sub_domain"
+	case TokenPolicy:
+		return "token_policy"
 	}
 	return "unknown"
 }
