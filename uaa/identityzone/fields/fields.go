@@ -9,6 +9,7 @@ const (
 	Id
 	IsActive
 	Name
+	SamlConfig
 	SubDomain
 )
 
@@ -26,6 +27,8 @@ func (s IdentityZoneField) String() string {
 		return "is_active"
 	case Name:
 		return "id"
+	case SamlConfig:
+		return "saml_config"
 	case SubDomain:
 		return "sub_domain"
 	}

@@ -45,6 +45,14 @@ var Schema = map[string]*schema.Schema{
 			Schema: CorsPolicySchema,
 		},
 	},
+	fields.SamlConfig.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: SamlConfigSchema,
+		},
+	},
 	fields.Config.String(): {
 		Type:     schema.TypeList,
 		Required: true,
@@ -63,14 +71,6 @@ var ConfigSchema = map[string]*schema.Schema{
 		MaxItems: 1,
 		Elem: &schema.Resource{
 			Schema: TokenPolicySchema,
-		},
-	},
-	configfields.Saml.String(): {
-		Type:     schema.TypeList,
-		Optional: true,
-		MaxItems: 1,
-		Elem: &schema.Resource{
-			Schema: SamlConfigSchema,
 		},
 	},
 }
