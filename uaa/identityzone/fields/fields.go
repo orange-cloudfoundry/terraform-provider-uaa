@@ -3,8 +3,9 @@ package fields
 type IdentityZoneField int64
 
 const (
-	Config IdentityZoneField = iota
-	ClientSecretPolicy
+	ClientSecretPolicy IdentityZoneField = iota
+	Config
+	CorsConfig
 	Id
 	IsActive
 	Name
@@ -13,10 +14,12 @@ const (
 
 func (s IdentityZoneField) String() string {
 	switch s {
-	case Config:
-		return "config"
 	case ClientSecretPolicy:
 		return "client_secret_policy"
+	case Config:
+		return "config"
+	case CorsConfig:
+		return "cors_config"
 	case Id:
 		return "id"
 	case IsActive:

@@ -21,11 +21,11 @@ func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) 
 	data.Set(fields.Name.String(), identityZone.Name)
 	data.Set(fields.SubDomain.String(), identityZone.SubDomain)
 	data.Set(fields.ClientSecretPolicy.String(), mapIdentityZoneClientSecretPolicy(&identityZone.Config.ClientSecretPolicy))
+	data.Set(fields.CorsConfig.String(), mapIdentityZoneCorsPolicy(&identityZone.Config.CorsPolicy))
 }
 
 func mapIdentityZoneConfig(data *api.IdentityZoneConfig) []map[string]interface{} {
 	return []map[string]interface{}{{
-		configfields.CorsConfig.String():  mapIdentityZoneCorsPolicy(&data.CorsPolicy),
 		configfields.Saml.String():        mapIdentityZoneSamlConfig(&data.Saml),
 		configfields.TokenPolicy.String(): mapIdentityZoneTokenPolicy(&data.TokenPolicy),
 	}}
