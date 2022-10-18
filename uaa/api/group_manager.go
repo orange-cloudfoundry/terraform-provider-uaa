@@ -7,6 +7,7 @@ import (
 	"code.cloudfoundry.org/cli/cf/net"
 	"encoding/json"
 	"fmt"
+	apiheaders "github.com/terraform-providers/terraform-provider-uaa/uaa/api/headers"
 	"net/http"
 	"net/url"
 )
@@ -27,8 +28,6 @@ type UAAGroup struct {
 type UAAGroupResourceList struct {
 	Resources []UAAGroup `json:"resources"`
 }
-
-const zoneIdHeaderName = "X-Identity-Zone-Id"
 
 func newGroupManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *Logger) (gm *GroupManager, err error) {
 	gm = &GroupManager{
@@ -66,7 +65,7 @@ func (gm *GroupManager) CreateGroup(displayName string, description string, zone
 	if err != nil {
 		return nil, err
 	}
-	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 
 	group = &UAAGroup{}
 	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
@@ -96,7 +95,7 @@ func (gm *GroupManager) GetGroup(id, zoneId string) (group *UAAGroup, err error)
 	if err != nil {
 		return nil, err
 	}
-	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 
 	group = &UAAGroup{}
 	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
@@ -132,7 +131,7 @@ func (gm *GroupManager) UpdateGroup(id, displayName, description, zoneId string)
 		return nil, err
 	}
 	request.HTTPReq.Header.Set("If-Match", "*")
-	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 
 	group = &UAAGroup{}
 	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, group)
@@ -157,7 +156,7 @@ func (gm *GroupManager) DeleteGroup(id, zoneId string) (err error) {
 	if err != nil {
 		return err
 	}
-	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 	_, err = gm.uaaGateway.PerformRequest(request)
 
 	return
@@ -183,7 +182,7 @@ func (gm *GroupManager) FindByDisplayName(displayName, zoneId string) (group *UA
 	if err != nil {
 		return nil, err
 	}
-	request.HTTPReq.Header.Set(zoneIdHeaderName, zoneId)
+	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 
 	groupResourceList := &UAAGroupResourceList{}
 	_, err = gm.uaaGateway.PerformRequestForJSONResponse(request, groupResourceList)
