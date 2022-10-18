@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	apiheaders "github.com/terraform-providers/terraform-provider-uaa/uaa/api/headers"
 	"net/http"
 	"net/url"
 
@@ -224,7 +225,7 @@ func (um *UserManager) UpdateUser(
 	if err != nil {
 		return nil, err
 	}
-	request.HTTPReq.Header.Set("If-Match", "*")
+	request.HTTPReq.Header.Set(apiheaders.IfMatch.String(), "*")
 
 	user = &UAAUser{}
 	_, err = um.uaaGateway.PerformRequestForJSONResponse(request, user)

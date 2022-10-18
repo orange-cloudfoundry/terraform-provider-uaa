@@ -130,7 +130,7 @@ func (gm *GroupManager) UpdateGroup(id, displayName, description, zoneId string)
 	if err != nil {
 		return nil, err
 	}
-	request.HTTPReq.Header.Set("If-Match", "*")
+	request.HTTPReq.Header.Set(apiheaders.IfMatch.String(), "*")
 	request.HTTPReq.Header.Set(apiheaders.ZoneId.String(), zoneId)
 
 	group = &UAAGroup{}
