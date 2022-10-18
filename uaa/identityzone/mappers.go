@@ -5,6 +5,8 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/configfields"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfignames"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
@@ -23,9 +25,31 @@ func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) 
 func mapIdentityZoneConfig(data *api.IdentityZoneConfig) []map[string]interface{} {
 	return []map[string]interface{}{{
 		configfields.ClientSecretPolicy.String(): mapIdentityZoneClientSecretPolicy(&data.ClientSecretPolicy),
+		configfields.CorsConfig.String():         mapIdentityZoneCorsPolicy(&data.CorsPolicy),
 		configfields.Saml.String():               mapIdentityZoneSamlConfig(&data.Saml),
 		configfields.TokenPolicy.String():        mapIdentityZoneTokenPolicy(&data.TokenPolicy),
 	}}
+}
+
+func mapIdentityZoneCorsPolicy(data *api.IdentityZoneCorsPolicy) []map[string]interface{} {
+	return []map[string]interface{}{
+		mapIdentityZoneCorsConfiguration(corsconfignames.Default, &data.DefaultConfiguration),
+		mapIdentityZoneCorsConfiguration(corsconfignames.Xhr, &data.XhrConfiguration),
+	}
+}
+
+func mapIdentityZoneCorsConfiguration(name corsconfignames.CorsConfigName, data *api.IdentityZoneCorsConfig) map[string]interface{} {
+	return map[string]interface{}{
+		corsconfigfields.AllowedOrigins.String():        data.AllowedOrigins,
+		corsconfigfields.AllowedOriginPatterns.String(): data.AllowedOriginPatterns,
+		corsconfigfields.AllowedUris.String():           data.AllowedUris,
+		corsconfigfields.AllowedUriPatterns.String():    data.AllowedUriPatterns,
+		corsconfigfields.AllowedHeaders.String():        data.AllowedHeaders,
+		corsconfigfields.AllowedMethods.String():        data.AllowedMethods,
+		corsconfigfields.AllowedCredentials.String():    data.AllowedCredentials,
+		corsconfigfields.Name.String():                  name.String(),
+		corsconfigfields.MaxAge.String():                data.MaxAge,
+	}
 }
 
 func mapIdentityZoneSamlConfig(data *api.IdentityZoneSamlConfig) []map[string]interface{} {

@@ -54,6 +54,7 @@ type IdentityZone struct {
 
 type IdentityZoneConfig struct {
 	ClientSecretPolicy IdentityZoneClientSecretPolicy `json:"clientSecretPolicy"`
+	CorsPolicy         IdentityZoneCorsPolicy         `json:"corsPolicy"`
 	TokenPolicy        IdentityZoneTokenPolicy        `json:"tokenPolicy"`
 	Saml               IdentityZoneSamlConfig         `json:"samlConfig"`
 }
@@ -65,6 +66,22 @@ type IdentityZoneClientSecretPolicy struct {
 	MinLowerCaseCharacter int64 `json:"requireLowerCaseCharacter,omitempty"`
 	MinDigit              int64 `json:"requireDigit,omitempty"`
 	MinSpecialCharacter   int64 `json:"requireSpecialCharacter,omitempty"`
+}
+
+type IdentityZoneCorsPolicy struct {
+	DefaultConfiguration IdentityZoneCorsConfig `json:"defaultConfiguration"`
+	XhrConfiguration     IdentityZoneCorsConfig `json:"xhrConfiguration"`
+}
+
+type IdentityZoneCorsConfig struct {
+	AllowedOrigins        []string `json:"allowedOrigins"`
+	AllowedOriginPatterns []string `json:"allowedOriginPatterns"`
+	AllowedUris           []string `json:"allowedUris"`
+	AllowedUriPatterns    []string `json:"allowedUriPatterns"`
+	AllowedHeaders        []string `json:"allowedHeaders"`
+	AllowedMethods        []string `json:"allowedMethods"`
+	AllowedCredentials    bool     `json:"allowedCredentials"`
+	MaxAge                int64    `json:"maxAge"`
 }
 
 type IdentityZoneTokenPolicy struct {

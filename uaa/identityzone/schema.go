@@ -4,6 +4,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/configfields"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
@@ -46,6 +47,14 @@ var ConfigSchema = map[string]*schema.Schema{
 		MaxItems: 1,
 		Elem: &schema.Resource{
 			Schema: ClientSecretPolicySchema,
+		},
+	},
+	configfields.CorsConfig.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 2,
+		Elem: &schema.Resource{
+			Schema: CorsPolicySchema,
 		},
 	},
 	configfields.TokenPolicy.String(): {
@@ -180,6 +189,66 @@ var SamlConfigKeySchema = map[string]*schema.Schema{
 	samlkeyfields.Name.String(): {
 		Type:     schema.TypeString,
 		Required: true,
+	},
+}
+
+var CorsPolicySchema = map[string]*schema.Schema{
+	corsconfigfields.AllowedOrigins.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedOriginPatterns.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedUris.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedUriPatterns.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedHeaders.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedMethods.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
+	corsconfigfields.AllowedCredentials.String(): {
+		Type:     schema.TypeBool,
+		Optional: true,
+	},
+	corsconfigfields.Name.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+		//ValidateFunc: func(i interface{}, s string) ([]string, []error) {
+		//	// TODO: ensure valid corsconfignames.CorsConfigName
+		//},
+	},
+	corsconfigfields.MaxAge.String(): {
+		Type:     schema.TypeInt,
+		Optional: true,
 	},
 }
 
