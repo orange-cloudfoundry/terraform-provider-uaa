@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/util"
@@ -46,14 +45,8 @@ func createResource(ctx context.Context, data *schema.ResourceData, i interface{
 	session.Log.DebugMessage("New user created: %# v", user)
 
 	data.SetId(user.ID)
-	diagErr := updateResource(ctx, data, uaa.NewResourceMeta{
-		Meta: i,
-	})
-	if diagErr != nil {
-		return diagErr
-	}
 
-	return nil
+	return updateClientRoles(um, data)
 }
 
 func readResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
@@ -92,65 +85,38 @@ func readResource(ctx context.Context, data *schema.ResourceData, i interface{})
 
 func updateResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	var (
-		newResource bool
-		session     *api.Session
-	)
-
-	if m, ok := i.(uaa.NewResourceMeta); ok {
-		session = m.Meta.(*api.Session)
-		newResource = true
-	} else {
-		session = i.(*api.Session)
-		if session == nil {
-			return diag.Errorf("client is nil")
-		}
-		newResource = false
+	session := i.(*api.Session)
+	if session == nil {
+		return diag.Errorf("client is nil")
 	}
 
 	id := data.Id()
 	um := session.UserManager()
 
-	if !newResource {
+	isModified := false
+	name := util.GetChangedValueString(fields.Name.String(), &isModified, data)
+	givenName := util.GetChangedValueString(fields.GivenName.String(), &isModified, data)
+	familyName := util.GetChangedValueString(fields.FamilyName.String(), &isModified, data)
+	email := util.GetChangedValueString(fields.Email.String(), &isModified, data)
 
-		updateUserDetail := false
-		u, _, name := util.GetResourceChange(fields.Name.String(), data)
-		updateUserDetail = updateUserDetail || u
-		u, _, givenName := util.GetResourceChange(fields.GivenName.String(), data)
-		updateUserDetail = updateUserDetail || u
-		u, _, familyName := util.GetResourceChange(fields.FamilyName.String(), data)
-		updateUserDetail = updateUserDetail || u
-		u, _, email := util.GetResourceChange(fields.Email.String(), data)
-		updateUserDetail = updateUserDetail || u
-		if updateUserDetail {
-			user, err := um.UpdateUser(id, name, givenName, familyName, email)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			session.Log.DebugMessage("User updated: %# v", user)
-		}
-
-		updatePassword, oldPassword, newPassword := util.GetResourceChange("password", data)
-		if updatePassword {
-			err := um.ChangePassword(id, oldPassword, newPassword)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			session.Log.DebugMessage("Password for user with id '%s' and name %s' updated.", id, name)
-		}
-	}
-
-	oldUser, newUser := data.GetChange(fields.Groups.String())
-	rolesToDelete, rolesToAdd := util.GetListChanges(oldUser, newUser)
-
-	if len(rolesToDelete) > 0 || len(rolesToAdd) > 0 {
-		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, data.Get(fields.Origin.String()).(string))
+	if isModified {
+		user, err := um.UpdateUser(id, *name, *givenName, *familyName, *email)
 		if err != nil {
 			return diag.FromErr(err)
 		}
+		session.Log.DebugMessage("User updated: %# v", user)
 	}
 
-	return nil
+	updatePassword, oldPassword, newPassword := util.GetResourceChange(fields.Password.String(), data)
+	if updatePassword {
+		err := um.ChangePassword(id, oldPassword, newPassword)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		session.Log.DebugMessage("Password for user with id '%s' and name %s' updated.", id, name)
+	}
+
+	return updateClientRoles(um, data)
 }
 
 func deleteResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
@@ -163,6 +129,19 @@ func deleteResource(ctx context.Context, data *schema.ResourceData, i interface{
 	id := data.Id()
 	um := session.UserManager()
 	_ = um.DeleteUser(id)
+
+	return nil
+}
+
+func updateClientRoles(um *api.UserManager, data *schema.ResourceData) diag.Diagnostics {
+
+	origin := data.Get(fields.Origin.String()).(string)
+	oldRoles, newRoles := data.GetChange(fields.Groups.String())
+	rolesToDelete, rolesToAdd := util.GetListChanges(oldRoles, newRoles)
+
+	if err := um.UpdateRoles(data.Id(), rolesToDelete, rolesToAdd, origin); err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
