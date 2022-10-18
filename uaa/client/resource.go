@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/client/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/util"
@@ -52,9 +51,7 @@ func createResource(ctx context.Context, data *schema.ResourceData, i interface{
 
 	data.SetId(client.ClientID)
 
-	return updateResource(ctx, data, uaa.NewResourceMeta{
-		Meta: i,
-	})
+	return nil
 }
 
 func readResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
@@ -104,75 +101,62 @@ func readResource(ctx context.Context, data *schema.ResourceData, i interface{})
 
 func updateResource(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 
-	var (
-		newResource bool
-		session     *api.Session
-	)
-
-	if m, ok := i.(uaa.NewResourceMeta); ok {
-		session = m.Meta.(*api.Session)
-		newResource = true
-	} else {
-		session = i.(*api.Session)
-		if session == nil {
-			return diag.Errorf("client is nil")
-		}
-		newResource = false
+	session := i.(*api.Session)
+	if session == nil {
+		return diag.Errorf("client is nil")
 	}
 
 	id := data.Id()
 	um := session.ClientManager()
 
-	if !newResource {
-		u := false
-		name := util.GetChangedValueString(fields.Name.String(), &u, data)
-		salt := util.GetChangedValueString(fields.TokenSalt.String(), &u, data)
-		created := util.GetChangedValueString(fields.CreatedWith.String(), &u, data)
-		providers := util.GetChangedValueStringList(fields.AllowProviders.String(), &u, data)
-		grants := util.GetChangedValueStringList(fields.AuthorizedGrantTypes.String(), &u, data)
-		uris := util.GetChangedValueStringList(fields.RedirectUri.String(), &u, data)
-		scope := util.GetChangedValueStringList(fields.Scope.String(), &u, data)
-		resources := util.GetChangedValueStringList(fields.ResourceIds.String(), &u, data)
-		authorities := util.GetChangedValueStringList(fields.Authorities.String(), &u, data)
-		groups := util.GetChangedValueStringList(fields.RequiredUserGroups.String(), &u, data)
-		autoApprove := util.GetChangedValueStringList(fields.AutoApprove.String(), &u, data)
-		accestok := util.GetChangedValueInt(fields.AccessTokenValidity.String(), &u, data)
-		refreshtok := util.GetChangedValueInt(fields.RefreshTokenValidity.String(), &u, data)
-		approval := util.GetChangedValueBool(fields.ApprovalsDeleted.String(), &u, data)
+	isModified := false
+	name := util.GetChangedValueString(fields.Name.String(), &isModified, data)
+	salt := util.GetChangedValueString(fields.TokenSalt.String(), &isModified, data)
+	created := util.GetChangedValueString(fields.CreatedWith.String(), &isModified, data)
+	providers := util.GetChangedValueStringList(fields.AllowProviders.String(), &isModified, data)
+	grants := util.GetChangedValueStringList(fields.AuthorizedGrantTypes.String(), &isModified, data)
+	uris := util.GetChangedValueStringList(fields.RedirectUri.String(), &isModified, data)
+	scope := util.GetChangedValueStringList(fields.Scope.String(), &isModified, data)
+	resources := util.GetChangedValueStringList(fields.ResourceIds.String(), &isModified, data)
+	authorities := util.GetChangedValueStringList(fields.Authorities.String(), &isModified, data)
+	groups := util.GetChangedValueStringList(fields.RequiredUserGroups.String(), &isModified, data)
+	autoApprove := util.GetChangedValueStringList(fields.AutoApprove.String(), &isModified, data)
+	accessTokenValidity := util.GetChangedValueInt(fields.AccessTokenValidity.String(), &isModified, data)
+	refreshTokenValidity := util.GetChangedValueInt(fields.RefreshTokenValidity.String(), &isModified, data)
+	approval := util.GetChangedValueBool(fields.ApprovalsDeleted.String(), &isModified, data)
 
-		if u {
-			client := api.UAAClient{
-				ClientID:             id,
-				AuthorizedGrantTypes: *grants,
-				RedirectURI:          *uris,
-				Scope:                *scope,
-				ResourceIds:          *resources,
-				Authorities:          *authorities,
-				AutoApprove:          *autoApprove,
-				AccessTokenValidity:  *accestok,
-				RefreshTokenValidity: *refreshtok,
-				AllowedProviders:     *providers,
-				Name:                 *name,
-				TokenSalt:            *salt,
-				CreatedWith:          *created,
-				ApprovalsDeleted:     *approval,
-				RequiredUserGroups:   *groups,
-			}
-			nclient, err := um.UpdateClient(&client)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			session.Log.DebugMessage("Client updated: %# v", nclient)
+	if isModified {
+		client := api.UAAClient{
+			ClientID:             id,
+			AuthorizedGrantTypes: *grants,
+			RedirectURI:          *uris,
+			Scope:                *scope,
+			ResourceIds:          *resources,
+			Authorities:          *authorities,
+			AutoApprove:          *autoApprove,
+			AccessTokenValidity:  *accessTokenValidity,
+			RefreshTokenValidity: *refreshTokenValidity,
+			AllowedProviders:     *providers,
+			Name:                 *name,
+			TokenSalt:            *salt,
+			CreatedWith:          *created,
+			ApprovalsDeleted:     *approval,
+			RequiredUserGroups:   *groups,
 		}
+		nclient, err := um.UpdateClient(&client)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+		session.Log.DebugMessage("Client updated: %# v", nclient)
+	}
 
-		updateSecret, oldSecret, newSecret := util.GetResourceChange("client_secret", data)
-		if updateSecret {
-			err := um.ChangeSecret(id, oldSecret, newSecret)
-			if err != nil {
-				return diag.FromErr(err)
-			}
-			session.Log.DebugMessage("Secret for client with id '%s' updated.", id)
+	updateSecret, oldSecret, newSecret := util.GetResourceChange("client_secret", data)
+	if updateSecret {
+		err := um.ChangeSecret(id, oldSecret, newSecret)
+		if err != nil {
+			return diag.FromErr(err)
 		}
+		session.Log.DebugMessage("Secret for client with id '%s' updated.", id)
 	}
 
 	return nil
