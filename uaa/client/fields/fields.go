@@ -26,7 +26,7 @@ func (s ClientField) String() string {
 	case AccessTokenValidity:
 		return "access_token_validity"
 	case AllowProviders:
-		return "allowedproviders"
+		return "allowed_providers"
 	case ApprovalsDeleted:
 		return "approvals_deleted"
 	case Authorities:
@@ -34,13 +34,13 @@ func (s ClientField) String() string {
 	case AuthorizedGrantTypes:
 		return "authorized_grant_types"
 	case AutoApprove:
-		return "autoapprove"
+		return "auto_approve"
 	case ClientId:
 		return "client_id"
 	case ClientSecret:
 		return "client_secret"
 	case CreatedWith:
-		return "createdwith"
+		return "created_with"
 	case Name:
 		return "name"
 	case RedirectUri:

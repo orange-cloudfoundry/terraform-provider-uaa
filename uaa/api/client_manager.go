@@ -30,10 +30,10 @@ type UAAClient struct {
 	Scope                []string `json:"scope,omitempty"`
 	ResourceIds          []string `json:"resource_ids,omitempty"`
 	Authorities          []string `json:"authorities,omitempty"`
-	Autoapprove          []string `json:"autoapprove,omitempty"`
+	AutoApprove          []string `json:"autoapprove,omitempty"`
 	AccessTokenValidity  int      `json:"access_token_validity,omitempty"`
 	RefreshTokenValidity int      `json:"refresh_token_validity,omitempty"`
-	Allowedproviders     []string `json:"allowedproviders,omitempty"`
+	AllowedProviders     []string `json:"allowedproviders,omitempty"`
 	Name                 string   `json:"name,omitempty"`
 	TokenSalt            string   `json:"token_salt,omitempty"`
 	CreatedWith          string   `json:"createdwith,omitempty"`

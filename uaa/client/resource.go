@@ -31,8 +31,8 @@ func createResource(ctx context.Context, data *schema.ResourceData, i interface{
 		RedirectURI:          util.ToStringsSlice(data.Get(fields.RedirectUri.String())),
 		ResourceIds:          util.ToStringsSlice(data.Get(fields.ResourceIds.String())),
 		Authorities:          util.ToStringsSlice(data.Get(fields.Authorities.String())),
-		Autoapprove:          util.ToStringsSlice(data.Get(fields.AutoApprove.String())),
-		Allowedproviders:     util.ToStringsSlice(data.Get(fields.AllowProviders.String())),
+		AutoApprove:          util.ToStringsSlice(data.Get(fields.AutoApprove.String())),
+		AllowedProviders:     util.ToStringsSlice(data.Get(fields.AllowProviders.String())),
 		RequiredUserGroups:   util.ToStringsSlice(data.Get(fields.RequiredUserGroups.String())),
 		Scope:                util.ToStringsSlice(data.Get(fields.Scope.String())),
 		AccessTokenValidity:  data.Get(fields.AccessTokenValidity.String()).(int),
@@ -89,10 +89,10 @@ func readResource(ctx context.Context, data *schema.ResourceData, i interface{})
 	data.Set(fields.ClientId.String(), client.ClientID)
 	data.Set(fields.AuthorizedGrantTypes.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.AuthorizedGrantTypes)))
 	data.Set(fields.RedirectUri.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.RedirectURI)))
-	data.Set(fields.AutoApprove.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.Autoapprove)))
+	data.Set(fields.AutoApprove.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.AutoApprove)))
 	data.Set(fields.AccessTokenValidity.String(), client.AccessTokenValidity)
 	data.Set(fields.RefreshTokenValidity.String(), client.RefreshTokenValidity)
-	data.Set(fields.AllowProviders.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.Allowedproviders)))
+	data.Set(fields.AllowProviders.String(), schema.NewSet(util.ResourceStringHash, util.ToInterface(client.AllowedProviders)))
 	data.Set(fields.Name.String(), client.Name)
 	data.Set(fields.TokenSalt.String(), client.TokenSalt)
 	data.Set(fields.CreatedWith.String(), client.CreatedWith)
@@ -135,7 +135,7 @@ func updateResource(ctx context.Context, data *schema.ResourceData, i interface{
 		resources := util.GetChangedValueStringList(fields.ResourceIds.String(), &u, data)
 		authorities := util.GetChangedValueStringList(fields.Authorities.String(), &u, data)
 		groups := util.GetChangedValueStringList(fields.RequiredUserGroups.String(), &u, data)
-		autoapprove := util.GetChangedValueStringList(fields.AutoApprove.String(), &u, data)
+		autoApprove := util.GetChangedValueStringList(fields.AutoApprove.String(), &u, data)
 		accestok := util.GetChangedValueInt(fields.AccessTokenValidity.String(), &u, data)
 		refreshtok := util.GetChangedValueInt(fields.RefreshTokenValidity.String(), &u, data)
 		approval := util.GetChangedValueBool(fields.ApprovalsDeleted.String(), &u, data)
@@ -148,10 +148,10 @@ func updateResource(ctx context.Context, data *schema.ResourceData, i interface{
 				Scope:                *scope,
 				ResourceIds:          *resources,
 				Authorities:          *authorities,
-				Autoapprove:          *autoapprove,
+				AutoApprove:          *autoApprove,
 				AccessTokenValidity:  *accestok,
 				RefreshTokenValidity: *refreshtok,
-				Allowedproviders:     *providers,
+				AllowedProviders:     *providers,
 				Name:                 *name,
 				TokenSalt:            *salt,
 				CreatedWith:          *created,

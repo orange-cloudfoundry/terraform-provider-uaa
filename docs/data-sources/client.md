@@ -33,12 +33,12 @@ The following attributes are exported:
 * `scope` - Scopes allowed for the client.
 * `resource_ids` - Resources the client is allowed access to.
 * `authorities` - Scopes which the client is able to grant when creating a client.
-* `autoapprove` - Scopes that do not require user approval.
+* `auto_approve` - Scopes that do not require user approval.
 * `access_token_validity` - time in seconds to access token expiration after it is issued.
 * `refresh_token_validity` - time in seconds to refresh token expiration after it is issued.
-* `allowedproviders` - A list of origin keys (alias) for identity providers the client is limited to.
+* `allowed_providers` - A list of origin keys (alias) for identity providers the client is limited to.
 * `name` - A human readable name for the client.
-* `createdwith` - What scope the bearer token had when client was created.
+* `created_with` - What scope the bearer token had when client was created.
 * `token_salt` - A random string used to generate the client's revokation key.
 * `approvals_deleted` - Were the approvals deleted for the client, and an audit event sent.
 * `required_user_groups` - A list of group names.
