@@ -4,6 +4,7 @@ type IdentityZoneField int64
 
 const (
 	Config IdentityZoneField = iota
+	ClientSecretPolicy
 	Id
 	IsActive
 	Name
@@ -14,6 +15,8 @@ func (s IdentityZoneField) String() string {
 	switch s {
 	case Config:
 		return "config"
+	case ClientSecretPolicy:
+		return "client_secret_policy"
 	case Id:
 		return "id"
 	case IsActive:

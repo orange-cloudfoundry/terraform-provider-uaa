@@ -29,6 +29,14 @@ var Schema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Optional: true,
 	},
+	fields.ClientSecretPolicy.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: ClientSecretPolicySchema,
+		},
+	},
 	fields.Config.String(): {
 		Type:     schema.TypeList,
 		Required: true,
@@ -41,14 +49,6 @@ var Schema = map[string]*schema.Schema{
 }
 
 var ConfigSchema = map[string]*schema.Schema{
-	configfields.ClientSecretPolicy.String(): {
-		Type:     schema.TypeList,
-		Optional: true,
-		MaxItems: 1,
-		Elem: &schema.Resource{
-			Schema: ClientSecretPolicySchema,
-		},
-	},
 	configfields.CorsConfig.String(): {
 		Type:     schema.TypeList,
 		Optional: true,
