@@ -77,16 +77,16 @@ type IdentityZoneTokenPolicy struct {
 }
 
 type IdentityZoneSamlConfig struct {
-	ActiveKeyId              string `json:"activeKeyId,omitempty"`
-	AssertionTtlSeconds      int64  `json:"assertionTimeToLiveSeconds,omitempty"`
-	Certificate              string `json:"certificate,omitempty"`
-	DisableInResponseToCheck bool   `json:"disableInResponseToCheck"`
-	EntityId                 string `json:"entityID,omitempty"`
-	IsAssertionSigned        bool   `json:"assertionSigned"`
-	IsRequestSigned          bool   `json:"requestSigned"`
-	//Keys                     map[string]IdentityZoneSamlKey `json:"keys,omitempty"`
-	WantAssertionSigned    bool `json:"wantAssertionSigned"`
-	WantAuthnRequestSigned bool `json:"wantAuthnRequestSigned"`
+	ActiveKeyId              string                         `json:"activeKeyId,omitempty"`
+	AssertionTtlSeconds      int64                          `json:"assertionTimeToLiveSeconds,omitempty"`
+	Certificate              string                         `json:"certificate,omitempty"`
+	DisableInResponseToCheck bool                           `json:"disableInResponseToCheck"`
+	EntityId                 string                         `json:"entityID,omitempty"`
+	IsAssertionSigned        bool                           `json:"assertionSigned"`
+	IsRequestSigned          bool                           `json:"requestSigned"`
+	Keys                     map[string]IdentityZoneSamlKey `json:"keys,omitempty"`
+	WantAssertionSigned      bool                           `json:"wantAssertionSigned"`
+	WantAuthnRequestSigned   bool                           `json:"wantAuthnRequestSigned"`
 }
 
 type IdentityZoneSamlKey struct {

@@ -29,5 +29,7 @@ func readDataSource(ctx context.Context, data *schema.ResourceData, i interface{
 		return diag.FromErr(err)
 	}
 
-	return MapIdentityZone(identityZone, data)
+	MapIdentityZone(identityZone, data)
+
+	return nil
 }

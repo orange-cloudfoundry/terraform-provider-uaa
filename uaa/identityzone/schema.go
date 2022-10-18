@@ -155,14 +155,13 @@ var SamlConfigSchema = map[string]*schema.Schema{
 		Type:     schema.TypeBool,
 		Optional: true,
 	},
-	//samlconfigfields.Key.String(): {
-	//	Type:     schema.TypeList,
-	//	Optional: true,
-	//	Elem:     &schema.Resource{
-	//		// how do we model this when the property name is dynamic?
-	//		// do we take it in with an extra name property and handle in the mapper?
-	//	},
-	//},
+	samlconfigfields.Key.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: SamlConfigKeySchema,
+		},
+	},
 	samlconfigfields.WantAssertionSigned.String(): {
 		Type:     schema.TypeBool,
 		Optional: true,
@@ -175,6 +174,10 @@ var SamlConfigSchema = map[string]*schema.Schema{
 
 var SamlConfigKeySchema = map[string]*schema.Schema{
 	samlkeyfields.Certificate.String(): {
+		Type:     schema.TypeString,
+		Required: true,
+	},
+	samlkeyfields.Name.String(): {
 		Type:     schema.TypeString,
 		Required: true,
 	},
