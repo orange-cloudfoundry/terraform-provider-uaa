@@ -91,9 +91,10 @@ var clientSchema = map[string]*schema.Schema{
 }
 
 // dataSourceSchema is the same as the resource schema but only the client Id is required; all other fields are optional
-var dataSourceSchema = createDataSourceSchema()
+var dataSourceSchema = mapSchemaForDataSource()
 
-func createDataSourceSchema() map[string]*schema.Schema {
+func mapSchemaForDataSource() map[string]*schema.Schema {
+
 	dsSchema := map[string]*schema.Schema{}
 
 	for k, v := range clientSchema {

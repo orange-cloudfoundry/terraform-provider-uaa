@@ -7,6 +7,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/client"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/group"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/user"
 )
@@ -22,9 +23,10 @@ func Provider() *schema.Provider {
 }
 
 var DataSources = map[string]*schema.Resource{
-	"uaa_user":   user.DataSource,
-	"uaa_client": client.DataSource,
-	"uaa_group":  group.DataSource,
+	"uaa_client":        client.DataSource,
+	"uaa_group":         group.DataSource,
+	"uaa_identity_zone": identityzone.DataSource,
+	"uaa_user":          user.DataSource,
 }
 
 var Resources = map[string]*schema.Resource{

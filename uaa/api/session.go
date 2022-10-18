@@ -21,10 +21,11 @@ type Session struct {
 	config     coreconfig.Repository
 	uaaGateway net.Gateway
 
-	authManager   *AuthManager
-	userManager   *UserManager
-	clientManager *ClientManager
-	groupManager  *GroupManager
+	authManager        *AuthManager
+	clientManager      *ClientManager
+	groupManager       *GroupManager
+	identityZoneManger *IdentityZoneManager
+	userManager        *UserManager
 }
 
 type Config struct {
@@ -87,6 +88,11 @@ func NewSession(config *Config) (s *Session, err error) {
 		return nil, err
 	}
 
+	s.identityZoneManger, err = newIdentityZoneManager(s.config, s.uaaGateway, s.Log)
+	if err != nil {
+		return nil, err
+	}
+
 	if s.userManager.clientToken, err = s.authManager.GetClientToken(config.ClientID, config.ClientSecret); err == nil {
 		err = s.userManager.loadGroups()
 	}
@@ -107,6 +113,10 @@ func (s *Session) ClientManager() *ClientManager {
 // GroupManager -
 func (s *Session) GroupManager() *GroupManager {
 	return s.groupManager
+}
+
+func (s *Session) IdentityZoneManager() *IdentityZoneManager {
+	return s.identityZoneManger
 }
 
 // AuthManager -
