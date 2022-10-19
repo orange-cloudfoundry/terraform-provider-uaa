@@ -3,11 +3,13 @@ package fields
 type IdentityZoneField int64
 
 const (
-	ClientSecretPolicy IdentityZoneField = iota
+	AccountChooserEnabled IdentityZoneField = iota
+	ClientSecretPolicy
 	CorsConfig
 	Id
 	InputPrompts
 	IsActive
+	IdpDiscoveryEnabled
 	LogoutRedirectUrl
 	LogoutRedirectParam
 	LogoutAllowedRedirectUrls
@@ -23,6 +25,8 @@ const (
 
 func (s IdentityZoneField) String() string {
 	switch s {
+	case AccountChooserEnabled:
+		return "account_chooser_enabled"
 	case ClientSecretPolicy:
 		return "client_secret_policy"
 	case CorsConfig:
@@ -33,6 +37,8 @@ func (s IdentityZoneField) String() string {
 		return "id"
 	case InputPrompts:
 		return "input_prompt"
+	case IdpDiscoveryEnabled:
+		return "idp_discovery_enabled"
 	case IsActive:
 		return "is_active"
 	case LogoutRedirectUrl:

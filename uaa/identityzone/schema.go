@@ -16,6 +16,11 @@ var Schema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Required: true,
 	},
+	fields.AccountChooserEnabled.String(): {
+		Type:     schema.TypeBool,
+		Optional: true,
+		Default:  false,
+	},
 	fields.HomeRedirectUrl.String(): {
 		Type:     schema.TypeString,
 		Optional: true,
@@ -26,6 +31,11 @@ var Schema = map[string]*schema.Schema{
 		Elem: &schema.Resource{
 			Schema: InputPromptSchema,
 		},
+	},
+	fields.IdpDiscoveryEnabled.String(): {
+		Type:     schema.TypeBool,
+		Optional: true,
+		Default:  false,
 	},
 	fields.IsActive.String(): {
 		Type:     schema.TypeBool,

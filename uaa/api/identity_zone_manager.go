@@ -53,12 +53,14 @@ type IdentityZone struct {
 }
 
 type IdentityZoneConfig struct {
-	ClientSecretPolicy IdentityZoneClientSecretPolicy `json:"clientSecretPolicy,omitempty"`
-	CorsPolicy         IdentityZoneCorsPolicy         `json:"corsPolicy,omitempty"`
-	InputPrompts       []InputPrompt                  `json:"prompts,omitempty"'`
-	Links              IdentityZoneLinks              `json:"links,omitempty"`
-	TokenPolicy        IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
-	Saml               IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
+	AccountChooserEnabled bool                           `json:"accountChooserEnabled"`
+	ClientSecretPolicy    IdentityZoneClientSecretPolicy `json:"clientSecretPolicy,omitempty"`
+	CorsPolicy            IdentityZoneCorsPolicy         `json:"corsPolicy,omitempty"`
+	IdpDiscoveryEnabled   bool                           `json:"idpDiscoveryEnabled"`
+	InputPrompts          []InputPrompt                  `json:"prompts,omitempty"'`
+	Links                 IdentityZoneLinks              `json:"links,omitempty"`
+	TokenPolicy           IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
+	Saml                  IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
 }
 
 type IdentityZoneClientSecretPolicy struct {

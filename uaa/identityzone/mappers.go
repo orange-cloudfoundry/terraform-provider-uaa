@@ -16,10 +16,12 @@ import (
 func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) {
 
 	data.SetId(identityZone.Id)
+	data.Set(fields.AccountChooserEnabled.String(), identityZone.Config.AccountChooserEnabled)
 	data.Set(fields.IsActive.String(), identityZone.IsActive)
 	data.Set(fields.ClientSecretPolicy.String(), mapIdentityZoneClientSecretPolicy(&identityZone.Config.ClientSecretPolicy))
 	data.Set(fields.CorsConfig.String(), mapIdentityZoneCorsPolicy(&identityZone.Config.CorsPolicy))
 	data.Set(fields.HomeRedirectUrl.String(), identityZone.Config.Links.HomeRedirect)
+	data.Set(fields.IdpDiscoveryEnabled.String(), &identityZone.Config.IdpDiscoveryEnabled)
 	data.Set(fields.InputPrompts.String(), mapIdentityZoneInputPrompts(&identityZone.Config.InputPrompts))
 	data.Set(fields.LogoutRedirectParam.String(), identityZone.Config.Links.Logout.RedirectParameterName)
 	data.Set(fields.LogoutRedirectUrl.String(), identityZone.Config.Links.Logout.RedirectUrl)
