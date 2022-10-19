@@ -7,6 +7,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfignames"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
@@ -19,6 +20,7 @@ func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) 
 	data.Set(fields.ClientSecretPolicy.String(), mapIdentityZoneClientSecretPolicy(&identityZone.Config.ClientSecretPolicy))
 	data.Set(fields.CorsConfig.String(), mapIdentityZoneCorsPolicy(&identityZone.Config.CorsPolicy))
 	data.Set(fields.HomeRedirectUrl.String(), identityZone.Config.Links.HomeRedirect)
+	data.Set(fields.InputPrompts.String(), mapIdentityZoneInputPrompts(&identityZone.Config.InputPrompts))
 	data.Set(fields.LogoutRedirectParam.String(), identityZone.Config.Links.Logout.RedirectParameterName)
 	data.Set(fields.LogoutRedirectUrl.String(), identityZone.Config.Links.Logout.RedirectUrl)
 	data.Set(fields.LogoutAllowedRedirectUrls.String(), identityZone.Config.Links.Logout.AllowedRedirectUrls)
@@ -99,4 +101,17 @@ func mapIdentityZoneTokenPolicy(data *api.IdentityZoneTokenPolicy) []map[string]
 		tokenpolicyfields.RefreshTokenFormat.String():   data.RefreshTokenFormat,
 		tokenpolicyfields.RefreshTokenTtl.String():      data.RefreshTokenTtl,
 	}}
+}
+
+func mapIdentityZoneInputPrompts(data *[]api.InputPrompt) (prompts []map[string]interface{}) {
+
+	for _, prompt := range *data {
+		prompts = append(prompts, map[string]interface{}{
+			inputpromptfields.Name.String():  prompt.Name,
+			inputpromptfields.Type.String():  prompt.Type,
+			inputpromptfields.Value.String(): prompt.Value,
+		})
+	}
+
+	return prompts
 }

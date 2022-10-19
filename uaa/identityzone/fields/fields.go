@@ -6,6 +6,7 @@ const (
 	ClientSecretPolicy IdentityZoneField = iota
 	CorsConfig
 	Id
+	InputPrompts
 	IsActive
 	LogoutRedirectUrl
 	LogoutRedirectParam
@@ -30,6 +31,8 @@ func (s IdentityZoneField) String() string {
 		return "home_redirect_url"
 	case Id:
 		return "id"
+	case InputPrompts:
+		return "input_prompt"
 	case IsActive:
 		return "is_active"
 	case LogoutRedirectUrl:

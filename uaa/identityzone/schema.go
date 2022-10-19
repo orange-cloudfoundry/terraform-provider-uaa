@@ -5,6 +5,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
+	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
 	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
@@ -18,6 +19,13 @@ var Schema = map[string]*schema.Schema{
 	fields.HomeRedirectUrl.String(): {
 		Type:     schema.TypeString,
 		Optional: true,
+	},
+	fields.InputPrompts.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: InputPromptSchema,
+		},
 	},
 	fields.IsActive.String(): {
 		Type:     schema.TypeBool,
@@ -268,6 +276,22 @@ var CorsPolicySchema = map[string]*schema.Schema{
 	corsconfigfields.MaxAge.String(): {
 		Type:     schema.TypeInt,
 		Optional: true,
+	},
+}
+
+var InputPromptSchema = map[string]*schema.Schema{
+	inputpromptfields.Name.String(): {
+		Type:     schema.TypeString,
+		Required: true,
+	},
+	inputpromptfields.Type.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+		Default:  "text",
+	},
+	inputpromptfields.Value.String(): {
+		Type:     schema.TypeString,
+		Required: true,
 	},
 }
 

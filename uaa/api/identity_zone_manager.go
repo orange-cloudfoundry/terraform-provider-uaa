@@ -55,6 +55,7 @@ type IdentityZone struct {
 type IdentityZoneConfig struct {
 	ClientSecretPolicy IdentityZoneClientSecretPolicy `json:"clientSecretPolicy,omitempty"`
 	CorsPolicy         IdentityZoneCorsPolicy         `json:"corsPolicy,omitempty"`
+	InputPrompts       []InputPrompt                  `json:"prompts,omitempty"'`
 	Links              IdentityZoneLinks              `json:"links,omitempty"`
 	TokenPolicy        IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
 	Saml               IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
@@ -127,4 +128,10 @@ type SelfServiceLinks struct {
 	Enabled          bool   `json:"selfServiceLinksEnabled"`
 	SignupUrl        string `json:"signup,omitempty"`
 	PasswordResetUrl string `json:"signup,passwd"`
+}
+
+type InputPrompt struct {
+	Name  string `json:"name,omitempty"`
+	Type  string `json:"type,omitempty"`
+	Value string `json:"text,omitempty"`
 }
