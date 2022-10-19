@@ -114,10 +114,17 @@ type IdentityZoneSamlKey struct {
 type IdentityZoneLinks struct {
 	HomeRedirect string                  `json:"homeRedirect,omitempty"`
 	Logout       IdentityZoneLogoutLinks `json:"logout,omitempty"`
+	SelfService  SelfServiceLinks        `json:"selfService,omitempty"`
 }
 
 type IdentityZoneLogoutLinks struct {
 	RedirectUrl           string   `json:"redirectUrl,omitempty"`
 	RedirectParameterName string   `json:"redirectParameterName,omitempty"`
 	AllowedRedirectUrls   []string `json:"whitelist"`
+}
+
+type SelfServiceLinks struct {
+	Enabled          bool   `json:"selfServiceLinksEnabled"`
+	SignupUrl        string `json:"signup,omitempty"`
+	PasswordResetUrl string `json:"signup,passwd"`
 }

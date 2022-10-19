@@ -13,6 +13,9 @@ const (
 	HomeRedirectUrl
 	Name
 	SamlConfig
+	SelfServeEnabled
+	SelfServeSignupUrl
+	SelfServePasswordResetUrl
 	SubDomain
 	TokenPolicy
 )
@@ -39,6 +42,12 @@ func (s IdentityZoneField) String() string {
 		return "id"
 	case SamlConfig:
 		return "saml_config"
+	case SelfServeEnabled:
+		return "self_serve_enabled"
+	case SelfServeSignupUrl:
+		return "self_serve_signup_url"
+	case SelfServePasswordResetUrl:
+		return "self_serve_pw_reset_url"
 	case SubDomain:
 		return "sub_domain"
 	case TokenPolicy:

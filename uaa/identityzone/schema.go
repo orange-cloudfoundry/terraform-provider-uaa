@@ -43,6 +43,19 @@ var Schema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Required: true,
 	},
+	fields.SelfServeEnabled.String(): {
+		Type:     schema.TypeBool,
+		Optional: true,
+		Default:  false,
+	},
+	fields.SelfServeSignupUrl.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
+	fields.SelfServePasswordResetUrl.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
 	fields.SubDomain.String(): {
 		Type:     schema.TypeString,
 		Optional: true,
