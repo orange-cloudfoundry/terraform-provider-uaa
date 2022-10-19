@@ -60,6 +60,7 @@ type IdentityZoneConfig struct {
 	InputPrompts          []InputPrompt                  `json:"prompts,omitempty"'`
 	IssuerUrl             string                         `json:"issuer,omitempty"`
 	Links                 IdentityZoneLinks              `json:"links,omitempty"`
+	MfaConfig             MfaConfig                      `json:"MfaConfig,omitempty"`
 	TokenPolicy           IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
 	Saml                  IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
 	UserConfig            UserConfig                     `json:"userConfig,omitempty"`
@@ -142,4 +143,9 @@ type InputPrompt struct {
 
 type UserConfig struct {
 	DefaultGroups []string `json:"defaultGroups,omitempty"`
+}
+
+type MfaConfig struct {
+	IsEnabled         bool     `json:"enabled"`
+	IdentityProviders []string `json:"identityProviders,omitempty"`
 }

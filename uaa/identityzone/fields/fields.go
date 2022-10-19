@@ -16,6 +16,8 @@ const (
 	LogoutRedirectParam
 	LogoutAllowedRedirectUrls
 	HomeRedirectUrl
+	MfaEnabled
+	MfaIdentityProviders
 	Name
 	SamlConfig
 	SelfServeEnabled
@@ -53,6 +55,10 @@ func (s IdentityZoneField) String() string {
 		return "logout_redirect_param"
 	case LogoutAllowedRedirectUrls:
 		return "logout_allowed_redirect_urls"
+	case MfaEnabled:
+		return "mfa_enabled"
+	case MfaIdentityProviders:
+		return "mfa_identity_providers"
 	case Name:
 		return "id"
 	case SamlConfig:

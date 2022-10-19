@@ -68,6 +68,18 @@ var Schema = map[string]*schema.Schema{
 			Type: schema.TypeString,
 		},
 	},
+	fields.MfaEnabled.String(): {
+		Type:     schema.TypeBool,
+		Optional: true,
+		Default:  false,
+	},
+	fields.MfaIdentityProviders.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
 	fields.Name.String(): {
 		Type:     schema.TypeString,
 		Required: true,
