@@ -112,7 +112,8 @@ type IdentityZoneSamlKey struct {
 }
 
 type IdentityZoneLinks struct {
-	Logout IdentityZoneLogoutLinks `json:"logout,omitempty"`
+	HomeRedirect string                  `json:"homeRedirect,omitempty"`
+	Logout       IdentityZoneLogoutLinks `json:"logout,omitempty"`
 }
 
 type IdentityZoneLogoutLinks struct {

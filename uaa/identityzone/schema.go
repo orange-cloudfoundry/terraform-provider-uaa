@@ -15,6 +15,10 @@ var Schema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 		Required: true,
 	},
+	fields.HomeRedirectUrl.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
 	fields.IsActive.String(): {
 		Type:     schema.TypeBool,
 		Optional: true,

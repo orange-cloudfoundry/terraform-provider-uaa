@@ -10,6 +10,7 @@ const (
 	LogoutRedirectUrl
 	LogoutRedirectParam
 	LogoutAllowedRedirectUrls
+	HomeRedirectUrl
 	Name
 	SamlConfig
 	SubDomain
@@ -22,6 +23,8 @@ func (s IdentityZoneField) String() string {
 		return "client_secret_policy"
 	case CorsConfig:
 		return "cors_config"
+	case HomeRedirectUrl:
+		return "home_redirect_url"
 	case Id:
 		return "id"
 	case IsActive:
