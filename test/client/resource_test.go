@@ -52,7 +52,8 @@ func TestAccClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -85,7 +86,8 @@ func TestAccClient_scope(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -108,7 +110,8 @@ func TestAccClient_createError(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
 				resource.TestStep{
@@ -128,7 +131,7 @@ func testAccCheckValidSecret(resource, secret string) resource.TestCheckFunc {
 		}
 
 		id := rs.Primary.ID
-		auth := util.IntegrationTestManager.UaaSession().AuthManager()
+		auth := util.UaaSession().AuthManager()
 		if _, err := auth.GetClientToken(id, secret); err != nil {
 			return err
 		}
@@ -142,10 +145,10 @@ func testAccCheckClientExists(resource string) resource.TestCheckFunc {
 		if !ok {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
-		util.IntegrationTestManager.UaaSession().Log.DebugMessage("terraform state for resource '%s': %# v", resource, rs)
+		util.UaaSession().Log.DebugMessage("terraform state for resource '%s': %# v", resource, rs)
 
 		id := rs.Primary.ID
-		um := util.IntegrationTestManager.UaaSession().ClientManager()
+		um := util.UaaSession().ClientManager()
 
 		// check client exists
 		_, err := um.GetClient(id)
@@ -158,7 +161,7 @@ func testAccCheckClientExists(resource string) resource.TestCheckFunc {
 
 func testAccCheckClientDestroy(id string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		um := util.IntegrationTestManager.UaaSession().ClientManager()
+		um := util.UaaSession().ClientManager()
 		if _, err := um.FindByClientID(id); err != nil {
 			switch err.(type) {
 			case *errors.ModelNotFoundError:

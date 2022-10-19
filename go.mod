@@ -27,7 +27,10 @@ require (
 	github.com/vito/go-interact v1.0.0 // indirect
 )
 
-require github.com/testcontainers/testcontainers-go v0.14.0
+require (
+	github.com/stretchr/testify v1.8.0
+	github.com/testcontainers/testcontainers-go v0.14.0
+)
 
 require (
 	code.cloudfoundry.org/tlsconfig v0.0.0-20220621140725-0e6fbd869921 // indirect
@@ -90,6 +93,7 @@ require (
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/opencontainers/runc v1.1.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect

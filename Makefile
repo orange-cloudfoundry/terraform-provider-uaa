@@ -12,7 +12,8 @@ init:
 	go mod download
 
 test:
-	go test -v -timeout 10m ./test/...
+	# go clean -testcache
+	go test -v -timeout 10m ./test --tags=containerized
 
 build:
 	go build -o $(ARTIFACT)

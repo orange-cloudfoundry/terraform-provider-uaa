@@ -27,7 +27,8 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config: groupDataResource,
@@ -46,7 +47,8 @@ func TestGroupDataSourceClient_normal(t *testing.T) {
 func TestGroupDataSourceClient_notFound(t *testing.T) {
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			Steps: []resource.TestStep{
 				{
 					Config:      groupDataResourceNotFound,
@@ -65,7 +67,7 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			return fmt.Errorf("client '%s' not found in terraform state", resource)
 		}
 
-		util.IntegrationTestManager.UaaSession().Log.DebugMessage(
+		util.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
@@ -78,7 +80,7 @@ func checkDataSourceGroupExists(resource string) resource.TestCheckFunc {
 			group *api.UAAGroup
 		)
 
-		group, err = util.IntegrationTestManager.UaaSession().GroupManager().FindByDisplayName(displayName, zoneId)
+		group, err = util.UaaSession().GroupManager().FindByDisplayName(displayName, zoneId)
 		if err != nil {
 			return err
 		}

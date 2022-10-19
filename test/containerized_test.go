@@ -1,67 +1,83 @@
-package util
+//go:build containerized
+
+package test
 
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
 
-// TODO: figure out how to get uaa config path dependably and avoid passing it in
-// TODO: figure out how to use same containers when running tests for multiple packages
+// This function executes before the test suite begins execution
+func (suite *integrationTestSuite) SetupSuite() {
 
-var IntegrationTestManager *UaaIntegrationTestManager
+	testManager := &integrationTestManager{context: context.Background()}
+	testManager.prepareEnvironment()
+	testManager.prepareDbContainer()
+	testManager.prepareUaaContainer()
+	testManager.createTestIdentityZone()
 
-func RunIntegrationTests(m *testing.M, uaaConfigPath string) {
-	IntegrationTestManager = newIntegrationTestManager(uaaConfigPath)
-
-	log.Println("Running tests...")
-	exitCode := m.Run()
-
-	os.Exit(exitCode)
+	// We would defer cleanup here if we didn't want to rely on garbage collection from testcontainer's reaper (ryuk)
+	// defer testManager.dbContainer.Terminate(uaaTestManager.context)
+	// defer testManager.uaaContainer.Terminate(uaaTestManager.context)
 }
 
-type UaaIntegrationTestManager struct {
-	context           context.Context
-	dbContainer       testcontainers.Container
-	uaaContainer      testcontainers.Container
-	uaaProvider       *schema.Provider
-	ProviderFactories map[string]func() (*schema.Provider, error)
+// This function executes after each test case
+func (suite *integrationTestSuite) TearDownTest() {
+	// Nothing to do; garbage collection will cleanup containers
 }
 
-func newIntegrationTestManager(uaaConfigPath string) *UaaIntegrationTestManager {
-	ctx := context.Background()
-
-	uaaTestManager := &UaaIntegrationTestManager{context: ctx}
-	uaaTestManager.prepareEnvironment()
-	uaaTestManager.prepareDbContainer()
-	//defer uaaTestManager.dbContainer.Terminate(ctx)	// would defer cleanup here if not using reaper (ryuk)
-	uaaTestManager.prepareUaaContainer(uaaConfigPath)
-	//defer uaaTestManager.uaaContainer.Terminate(ctx)	// would defer cleanup here if not using reaper (ryuk)
-	uaaTestManager.createTestIdentityZone()
-	uaaTestManager.prepareProviderFactories()
-
-	return uaaTestManager
+// In order for 'go test' to run this suite, we need to create a normal test function and pass our suite to suite.Run
+func TestIntegrationTestSuite(t *testing.T) {
+	suite.Run(t, new(integrationTestSuite))
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) prepareEnvironment() {
+// All methods that begin with "Test" are run as tests within a suite.
+
+func (suite *integrationTestSuite) TestIntegrationTests() {
+	cmd := exec.Command("go", "test", "-v", "./...")
+	cmd.Env = os.Environ()
+	stdout, err := cmd.Output()
+
+	log.Print("\n", string(stdout))
+
+	if err != nil {
+		assert.Failf(suite.T(), "Error running integration tests", err.Error())
+	}
+}
+
+// Private structures, methods, etc. for env setup
+type integrationTestSuite struct {
+	suite.Suite
+}
+
+type integrationTestManager struct {
+	context      context.Context
+	dbContainer  testcontainers.Container
+	uaaContainer testcontainers.Container
+}
+
+func (uaaTestManager *integrationTestManager) prepareEnvironment() {
 	log.Println("Preparing test environment...")
 
+	os.Setenv("TF_ACC", "true")
 	os.Setenv("DB_DATABASE", "uaa")
 	os.Setenv("DB_USERNAME", "uaa")
 	os.Setenv("DB_PASSWORD", "password")
 	os.Setenv("UAA_CONFIG_PATH", "/uaa")
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) prepareDbContainer() {
+func (uaaTestManager *integrationTestManager) prepareDbContainer() {
 	log.Println("Preparing test db container...")
 
 	req := testcontainers.ContainerRequest{
@@ -84,9 +100,10 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareDbContainer() {
 	os.Setenv("DB_HOST", ip)
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) prepareUaaContainer(uaaConfigPath string) {
+func (uaaTestManager *integrationTestManager) prepareUaaContainer() {
 	log.Println("Preparing test uaa container...")
 
+	uaaConfigPath, _ := filepath.Abs("../test/resources/uaa.yml")
 	req := testcontainers.ContainerRequest{
 		Image:        "cloudfoundry/uaa:76.0.0",
 		ExposedPorts: []string{"8080/tcp"},
@@ -115,11 +132,10 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareUaaContainer(uaaConfigPa
 	os.Setenv("UAA_LOGIN_URL", endpoint)
 	os.Setenv("UAA_CLIENT_ID", "admin")
 	os.Setenv("UAA_CLIENT_SECRET", "adminsecret")
-	os.Setenv("TF_ACC", "1")
 	os.Setenv("UAA_SKIP_SSL_VALIDATION", "1")
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) createTestIdentityZone() {
+func (uaaTestManager *integrationTestManager) createTestIdentityZone() {
 	log.Println("Creating additional test identity zone...")
 
 	cmd := []string{
@@ -136,7 +152,7 @@ func (uaaTestManager *UaaIntegrationTestManager) createTestIdentityZone() {
 	}
 }
 
-func (uaaTestManager *UaaIntegrationTestManager) prepareContainer(req testcontainers.ContainerRequest) (container testcontainers.Container) {
+func (uaaTestManager *integrationTestManager) prepareContainer(req testcontainers.ContainerRequest) (container testcontainers.Container) {
 	container, err := testcontainers.GenericContainer(
 		uaaTestManager.context,
 		testcontainers.GenericContainerRequest{
@@ -149,20 +165,4 @@ func (uaaTestManager *UaaIntegrationTestManager) prepareContainer(req testcontai
 	}
 
 	return container
-}
-
-func (uaaTestManager *UaaIntegrationTestManager) prepareProviderFactories() {
-	log.Println("Preparing provider factories...")
-
-	uaaTestManager.uaaProvider = provider.Provider()
-
-	uaaTestManager.ProviderFactories = map[string]func() (*schema.Provider, error){
-		"uaa": func() (*schema.Provider, error) {
-			return uaaTestManager.uaaProvider, nil
-		},
-	}
-}
-
-func (uaaTestManager *UaaIntegrationTestManager) UaaSession() *api.Session {
-	return uaaTestManager.uaaProvider.Meta().(*api.Session)
 }

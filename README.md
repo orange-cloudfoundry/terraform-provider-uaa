@@ -68,7 +68,7 @@ In order to run the tests locally, run.
 
 ```
 cd uaa
-TF_ACC=1 go test -v -timeout 120m .
+go test -v -timeout 120m .
 ```
 
 To run the tests in AWS first launch PCFDev in AWS via `scripts/pcfdev-up.sh`, and then run.

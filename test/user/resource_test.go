@@ -45,7 +45,8 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 				{
@@ -71,7 +72,8 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 
 	resource.Test(t,
 		resource.TestCase{
-			ProviderFactories: util.IntegrationTestManager.ProviderFactories,
+			PreCheck:          func() { util.IntegrationTestPreCheck(t) },
+			ProviderFactories: util.ProviderFactories,
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 				{
@@ -123,20 +125,20 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 			return fmt.Errorf("user '%s' not found in terraform state", resource)
 		}
 
-		util.IntegrationTestManager.UaaSession().Log.DebugMessage(
+		util.UaaSession().Log.DebugMessage(
 			"terraform state for resource '%s': %# v",
 			resource, rs)
 
 		id := rs.Primary.ID
 		attributes := rs.Primary.Attributes
 
-		um := util.IntegrationTestManager.UaaSession().UserManager()
+		um := util.UaaSession().UserManager()
 		user, err := um.GetUser(id)
 		if err != nil {
 			return err
 		}
 
-		util.IntegrationTestManager.UaaSession().Log.DebugMessage(
+		util.UaaSession().Log.DebugMessage(
 			"retrieved user for resource '%s' with id '%s': %# v",
 			resource, id, user)
 
@@ -173,7 +175,7 @@ func testAccCheckUserExists(resource string) resource.TestCheckFunc {
 func testAccCheckUserDestroy(username string) resource.TestCheckFunc {
 
 	return func(s *terraform.State) error {
-		um := util.IntegrationTestManager.UaaSession().UserManager()
+		um := util.UaaSession().UserManager()
 		if _, err := um.FindByUsername(username); err != nil {
 			switch err.(type) {
 			case *errors.ModelNotFoundError:
