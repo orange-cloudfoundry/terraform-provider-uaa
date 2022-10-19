@@ -49,6 +49,10 @@ var Schema = map[string]*schema.Schema{
 		Optional: true,
 		Default:  true,
 	},
+	fields.IssuerUrl.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
 	fields.LogoutRedirectParam.String(): {
 		Type:     schema.TypeString,
 		Optional: true,

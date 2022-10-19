@@ -58,6 +58,7 @@ type IdentityZoneConfig struct {
 	CorsPolicy            IdentityZoneCorsPolicy         `json:"corsPolicy,omitempty"`
 	IdpDiscoveryEnabled   bool                           `json:"idpDiscoveryEnabled"`
 	InputPrompts          []InputPrompt                  `json:"prompts,omitempty"'`
+	IssuerUrl             string                         `json:"issuer,omitempty"`
 	Links                 IdentityZoneLinks              `json:"links,omitempty"`
 	TokenPolicy           IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
 	Saml                  IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`

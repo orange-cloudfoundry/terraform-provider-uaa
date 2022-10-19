@@ -11,6 +11,7 @@ const (
 	InputPrompts
 	IsActive
 	IdpDiscoveryEnabled
+	IssuerUrl
 	LogoutRedirectUrl
 	LogoutRedirectParam
 	LogoutAllowedRedirectUrls
@@ -42,6 +43,8 @@ func (s IdentityZoneField) String() string {
 		return "input_prompt"
 	case IdpDiscoveryEnabled:
 		return "idp_discovery_enabled"
+	case IssuerUrl:
+		return "issuer_url"
 	case IsActive:
 		return "is_active"
 	case LogoutRedirectUrl:
