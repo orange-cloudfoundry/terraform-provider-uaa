@@ -21,6 +21,13 @@ var Schema = map[string]*schema.Schema{
 		Optional: true,
 		Default:  false,
 	},
+	fields.DefaultUserGroups.String(): {
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
 	fields.HomeRedirectUrl.String(): {
 		Type:     schema.TypeString,
 		Optional: true,
@@ -51,7 +58,7 @@ var Schema = map[string]*schema.Schema{
 		Optional: true,
 	},
 	fields.LogoutAllowedRedirectUrls.String(): {
-		Type:     schema.TypeList,
+		Type:     schema.TypeSet,
 		Optional: true,
 		Elem: &schema.Schema{
 			Type: schema.TypeString,
@@ -327,8 +334,6 @@ func mapSchemaForDataSource(originalSchema map[string]*schema.Schema) map[string
 				dsSchema[k].Elem = &schema.Resource{
 					Schema: mapSchemaForDataSource(elem.Schema),
 				}
-			} else {
-				dsSchema[k].Elem = v.Elem
 			}
 		}
 	}

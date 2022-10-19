@@ -6,6 +6,7 @@ const (
 	AccountChooserEnabled IdentityZoneField = iota
 	ClientSecretPolicy
 	CorsConfig
+	DefaultUserGroups
 	Id
 	InputPrompts
 	IsActive
@@ -31,6 +32,8 @@ func (s IdentityZoneField) String() string {
 		return "client_secret_policy"
 	case CorsConfig:
 		return "cors_config"
+	case DefaultUserGroups:
+		return "default_user_groups"
 	case HomeRedirectUrl:
 		return "home_redirect_url"
 	case Id:

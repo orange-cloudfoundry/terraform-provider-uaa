@@ -61,6 +61,7 @@ type IdentityZoneConfig struct {
 	Links                 IdentityZoneLinks              `json:"links,omitempty"`
 	TokenPolicy           IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
 	Saml                  IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
+	UserConfig            UserConfig                     `json:"userConfig,omitempty"`
 }
 
 type IdentityZoneClientSecretPolicy struct {
@@ -136,4 +137,8 @@ type InputPrompt struct {
 	Name  string `json:"name,omitempty"`
 	Type  string `json:"type,omitempty"`
 	Value string `json:"text,omitempty"`
+}
+
+type UserConfig struct {
+	DefaultGroups []string `json:"defaultGroups,omitempty"`
 }
