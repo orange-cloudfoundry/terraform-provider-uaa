@@ -3,8 +3,8 @@ package util
 import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/api"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/provider"
 	"os"
 	"testing"
 )

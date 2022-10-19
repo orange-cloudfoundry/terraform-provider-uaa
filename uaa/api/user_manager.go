@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	apiheaders "github.com/terraform-providers/terraform-provider-uaa/uaa/api/headers"
+	apiheaders "github.com/jlpospisil/terraform-provider-uaa/uaa/api/headers"
 	"net/http"
 	"net/url"
 

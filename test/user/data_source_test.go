@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-providers/terraform-provider-uaa/test/util"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
+	"github.com/jlpospisil/terraform-provider-uaa/test/util"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/api"
 	"testing"
 )
 

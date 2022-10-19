@@ -2,8 +2,8 @@ package client
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/client/fields"
-	"github.com/terraform-providers/terraform-provider-uaa/util"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/client/fields"
+	"github.com/jlpospisil/terraform-provider-uaa/util"
 )
 
 var clientSchema = map[string]*schema.Schema{

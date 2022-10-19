@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/provider/fields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/provider/fields"
 )
 
 var Schema = map[string]*schema.Schema{

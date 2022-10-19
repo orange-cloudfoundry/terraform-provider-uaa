@@ -2,15 +2,15 @@ package identityzone
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/api"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfignames"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/api"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/corsconfignames"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/fields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
 )
 
 func MapIdentityZone(identityZone *api.IdentityZone, data *schema.ResourceData) {

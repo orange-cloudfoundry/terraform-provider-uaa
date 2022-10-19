@@ -2,13 +2,13 @@ package identityzone
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/fields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/clientsecretpolicyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/corsconfigfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/fields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/inputpromptfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/samlconfigfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/samlkeyfields"
+	"github.com/jlpospisil/terraform-provider-uaa/uaa/identityzone/tokenpolicyfields"
 )
 
 var Schema = map[string]*schema.Schema{
