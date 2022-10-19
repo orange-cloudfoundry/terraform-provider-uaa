@@ -53,10 +53,11 @@ type IdentityZone struct {
 }
 
 type IdentityZoneConfig struct {
-	ClientSecretPolicy IdentityZoneClientSecretPolicy `json:"clientSecretPolicy"`
-	CorsPolicy         IdentityZoneCorsPolicy         `json:"corsPolicy"`
-	TokenPolicy        IdentityZoneTokenPolicy        `json:"tokenPolicy"`
-	Saml               IdentityZoneSamlConfig         `json:"samlConfig"`
+	ClientSecretPolicy IdentityZoneClientSecretPolicy `json:"clientSecretPolicy,omitempty"`
+	CorsPolicy         IdentityZoneCorsPolicy         `json:"corsPolicy,omitempty"`
+	Links              IdentityZoneLinks              `json:"links,omitempty"`
+	TokenPolicy        IdentityZoneTokenPolicy        `json:"tokenPolicy,omitempty"`
+	Saml               IdentityZoneSamlConfig         `json:"samlConfig,omitempty"`
 }
 
 type IdentityZoneClientSecretPolicy struct {
@@ -69,19 +70,19 @@ type IdentityZoneClientSecretPolicy struct {
 }
 
 type IdentityZoneCorsPolicy struct {
-	DefaultConfiguration IdentityZoneCorsConfig `json:"defaultConfiguration"`
-	XhrConfiguration     IdentityZoneCorsConfig `json:"xhrConfiguration"`
+	DefaultConfiguration IdentityZoneCorsConfig `json:"defaultConfiguration,omitempty"`
+	XhrConfiguration     IdentityZoneCorsConfig `json:"xhrConfiguration,omitempty"`
 }
 
 type IdentityZoneCorsConfig struct {
-	AllowedOrigins        []string `json:"allowedOrigins"`
-	AllowedOriginPatterns []string `json:"allowedOriginPatterns"`
-	AllowedUris           []string `json:"allowedUris"`
-	AllowedUriPatterns    []string `json:"allowedUriPatterns"`
-	AllowedHeaders        []string `json:"allowedHeaders"`
-	AllowedMethods        []string `json:"allowedMethods"`
+	AllowedOrigins        []string `json:"allowedOrigins,omitempty"`
+	AllowedOriginPatterns []string `json:"allowedOriginPatterns,omitempty"`
+	AllowedUris           []string `json:"allowedUris,omitempty"`
+	AllowedUriPatterns    []string `json:"allowedUriPatterns,omitempty"`
+	AllowedHeaders        []string `json:"allowedHeaders,omitempty"`
+	AllowedMethods        []string `json:"allowedMethods,omitempty"`
 	AllowedCredentials    bool     `json:"allowedCredentials"`
-	MaxAge                int64    `json:"maxAge"`
+	MaxAge                int64    `json:"maxAge,omitempty"`
 }
 
 type IdentityZoneTokenPolicy struct {
@@ -108,4 +109,14 @@ type IdentityZoneSamlConfig struct {
 
 type IdentityZoneSamlKey struct {
 	Certificate string `json:"certificate,omitempty"`
+}
+
+type IdentityZoneLinks struct {
+	Logout IdentityZoneLogoutLinks `json:"logout,omitempty"`
+}
+
+type IdentityZoneLogoutLinks struct {
+	RedirectUrl           string   `json:"redirectUrl,omitempty"`
+	RedirectParameterName string   `json:"redirectParameterName,omitempty"`
+	AllowedRedirectUrls   []string `json:"whitelist"`
 }

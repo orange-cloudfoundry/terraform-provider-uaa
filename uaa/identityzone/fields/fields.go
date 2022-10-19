@@ -7,6 +7,9 @@ const (
 	CorsConfig
 	Id
 	IsActive
+	LogoutRedirectUrl
+	LogoutRedirectParam
+	LogoutAllowedRedirectUrls
 	Name
 	SamlConfig
 	SubDomain
@@ -23,6 +26,12 @@ func (s IdentityZoneField) String() string {
 		return "id"
 	case IsActive:
 		return "is_active"
+	case LogoutRedirectUrl:
+		return "logout_redirect_url"
+	case LogoutRedirectParam:
+		return "logout_redirect_param"
+	case LogoutAllowedRedirectUrls:
+		return "logout_allowed_redirect_urls"
 	case Name:
 		return "id"
 	case SamlConfig:

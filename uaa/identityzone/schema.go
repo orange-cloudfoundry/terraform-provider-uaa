@@ -20,6 +20,21 @@ var Schema = map[string]*schema.Schema{
 		Optional: true,
 		Default:  true,
 	},
+	fields.LogoutRedirectParam.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
+	fields.LogoutRedirectUrl.String(): {
+		Type:     schema.TypeString,
+		Optional: true,
+	},
+	fields.LogoutAllowedRedirectUrls.String(): {
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	},
 	fields.Name.String(): {
 		Type:     schema.TypeString,
 		Required: true,
@@ -257,9 +272,12 @@ func mapSchemaForDataSource(originalSchema map[string]*schema.Schema) map[string
 			Elem:     v.Elem,
 		}
 		if v.Type == schema.TypeList {
-			elemSchema := v.Elem.(*schema.Resource).Schema
-			dsSchema[k].Elem = &schema.Resource{
-				Schema: mapSchemaForDataSource(elemSchema),
+			if elem, ok := v.Elem.(*schema.Resource); ok {
+				dsSchema[k].Elem = &schema.Resource{
+					Schema: mapSchemaForDataSource(elem.Schema),
+				}
+			} else {
+				dsSchema[k].Elem = v.Elem
 			}
 		}
 	}
