@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/orange-cloudfoundry/terraform-provider-uaa/uaa/uaaapi"
 	"regexp"
 	"testing"
 )

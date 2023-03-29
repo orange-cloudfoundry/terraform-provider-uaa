@@ -1,6 +1,6 @@
 package uaa
 
-import "github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+import "github.com/orange-cloudfoundry/terraform-provider-uaa/uaa/uaaapi"
 
 // Config -
 type Config struct {

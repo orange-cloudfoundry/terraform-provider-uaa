@@ -1,4 +1,4 @@
-module github.com/terraform-providers/terraform-provider-uaa
+module github.com/orange-cloudfoundry/terraform-provider-uaa
 
 go 1.20
 

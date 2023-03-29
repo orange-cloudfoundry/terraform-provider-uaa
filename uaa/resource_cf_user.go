@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/terraform-providers/terraform-provider-uaa/uaa/uaaapi"
+	"github.com/orange-cloudfoundry/terraform-provider-uaa/uaa/uaaapi"
 )
 
 func resourceUser() *schema.Resource {
