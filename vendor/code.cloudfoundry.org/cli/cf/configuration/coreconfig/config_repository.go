@@ -99,7 +99,7 @@ type Reader interface {
 	PluginRepos() []models.PluginRepo
 }
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . ReadWriter
+//go:generate counterfeiter . ReadWriter
 
 type ReadWriter interface {
 	Reader
@@ -132,7 +132,7 @@ type ReadWriter interface {
 	UnSetPluginRepo(int)
 }
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Repository
+//go:generate counterfeiter . Repository
 
 type Repository interface {
 	ReadWriter

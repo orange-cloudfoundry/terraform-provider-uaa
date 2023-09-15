@@ -1,6 +1,6 @@
 package trace
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Printer
+//go:generate counterfeiter . Printer
 
 type Printer interface {
 	Print(v ...interface{})

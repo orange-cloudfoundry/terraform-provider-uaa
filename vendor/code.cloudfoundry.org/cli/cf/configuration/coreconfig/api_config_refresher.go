@@ -6,7 +6,7 @@ import (
 	. "code.cloudfoundry.org/cli/cf/i18n"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . EndpointRepository
+//go:generate counterfeiter . EndpointRepository
 
 type EndpointRepository interface {
 	GetCCInfo(string) (*CCInfo, string, error)

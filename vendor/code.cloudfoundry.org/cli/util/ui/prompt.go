@@ -22,7 +22,7 @@ func (InvalidChoiceError) Error() string {
 	return "Some error"
 }
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Resolver
+//go:generate counterfeiter . Resolver
 
 type Resolver interface {
 	Resolve(dst interface{}) error
