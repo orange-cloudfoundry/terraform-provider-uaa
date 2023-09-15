@@ -2,7 +2,7 @@ package ui
 
 import "code.cloudfoundry.org/cli/util/configv3"
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Config
+//go:generate counterfeiter . Config
 
 // Config is the UI configuration.
 type Config interface {

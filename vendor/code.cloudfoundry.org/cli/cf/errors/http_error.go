@@ -6,7 +6,7 @@ import (
 	. "code.cloudfoundry.org/cli/cf/i18n"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . HTTPError
+//go:generate counterfeiter . HTTPError
 
 type HTTPError interface {
 	Error() string

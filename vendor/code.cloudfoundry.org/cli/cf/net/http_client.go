@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . HTTPClientInterface
+//go:generate counterfeiter . HTTPClientInterface
 
 type HTTPClientInterface interface {
 	RequestDumperInterface

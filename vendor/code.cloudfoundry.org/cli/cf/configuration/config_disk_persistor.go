@@ -10,7 +10,7 @@ const (
 	dirPermissions  = 0700
 )
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Persistor
+//go:generate counterfeiter . Persistor
 
 type Persistor interface {
 	Delete()
@@ -19,7 +19,7 @@ type Persistor interface {
 	Save(DataInterface) error
 }
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . DataInterface
+//go:generate counterfeiter . DataInterface
 
 type DataInterface interface {
 	JSONMarshalV3() ([]byte, error)
