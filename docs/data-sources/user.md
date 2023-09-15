@@ -8,7 +8,7 @@ Gets information on a Cloud Foundry UAA user.
 
 ## Example Usage
 
-The following example looks up an user named 'myuser'.
+The following example looks up a user named 'myuser'.
 
 ```
 data "uaa_user" "myuser" {

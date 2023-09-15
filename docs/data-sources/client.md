@@ -37,8 +37,8 @@ The following attributes are exported:
 * `access_token_validity` - time in seconds to access token expiration after it is issued.
 * `refresh_token_validity` - time in seconds to refresh token expiration after it is issued.
 * `allowedproviders` - A list of origin keys (alias) for identity providers the client is limited to.
-* `name` - A human readable name for the client.
+* `name` - A human-readable name for the client.
 * `createdwith` - What scope the bearer token had when client was created.
-* `token_salt` - A random string used to generate the client's revokation key.
+* `token_salt` - A random string used to generate the client's revocation key.
 * `approvals_deleted` - Were the approvals deleted for the client, and an audit event sent.
 * `required_user_groups` - A list of group names.
