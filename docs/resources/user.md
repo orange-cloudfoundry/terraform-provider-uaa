@@ -29,7 +29,7 @@ The following arguments are supported:
 
 * `name` - (Required) The name of the user. This will also be the users login name
 * `password` - (Optional) The user's password
-* `origin` - (Optional) The user authentcation origin. By default this will be `UAA`. For users authenticated by LDAP this should be `ldap`
+* `origin` - (Optional) The user authentication origin. By default, this will be `UAA`. For users authenticated by LDAP this should be `ldap`
 * `given_name` - (Optional) The given name of the user
 * `family_name` - (Optional) The family name of the user
 * `email` - (Optional) The email address of the user
