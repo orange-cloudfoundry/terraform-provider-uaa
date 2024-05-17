@@ -1,11 +1,12 @@
 package uaa
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"testing"
 
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -58,7 +59,7 @@ func TestAccClient_normal(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config: clientResource,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -68,7 +69,7 @@ func TestAccClient_normal(t *testing.T) {
 						testCheckResourceSet(ref, "redirect_uri", []string{"https://uaa.local.pcfdev.io/login"}),
 					),
 				},
-				resource.TestStep{
+				{
 					Config: clientResourceUpdateSecret,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -92,7 +93,7 @@ func TestAccClient_scope(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config: clientResourceWithScope,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -116,7 +117,7 @@ func TestAccClient_createError(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config:      clientResourceWithoutSecret,
 					ExpectError: regexp.MustCompile(".*Client secret is required for client_credentials.*"),
 				},
@@ -180,8 +181,9 @@ func testAccCheckClientDestroy(id string) resource.TestCheckFunc {
 		session := testAccProvider.Meta().(*uaaapi.Session)
 		um := session.ClientManager()
 		if _, err := um.FindByClientID(id); err != nil {
-			switch err.(type) {
-			case *errors.ModelNotFoundError:
+			var modelNotFoundError *cfErrors.ModelNotFoundError
+			switch {
+			case errors.As(err, &modelNotFoundError):
 				return nil
 			default:
 				return err

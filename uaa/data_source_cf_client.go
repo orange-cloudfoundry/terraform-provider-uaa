@@ -15,77 +15,77 @@ func dataSourceClient() *schema.Resource {
 		Read: dataSourceClientRead,
 
 		Schema: map[string]*schema.Schema{
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"authorized_grant_types": &schema.Schema{
+			"authorized_grant_types": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"redirect_uri": &schema.Schema{
+			"redirect_uri": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"scope": &schema.Schema{
+			"scope": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"resource_ids": &schema.Schema{
+			"resource_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"authorities": &schema.Schema{
+			"authorities": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"autoapprove": &schema.Schema{
+			"autoapprove": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"access_token_validity": &schema.Schema{
+			"access_token_validity": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"refresh_token_validity": &schema.Schema{
+			"refresh_token_validity": {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			"allowedproviders": &schema.Schema{
+			"allowedproviders": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"token_salt": &schema.Schema{
+			"token_salt": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"createdwith": &schema.Schema{
+			"createdwith": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"approvals_deleted": &schema.Schema{
+			"approvals_deleted": {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"required_user_groups": &schema.Schema{
+			"required_user_groups": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},

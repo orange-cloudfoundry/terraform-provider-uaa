@@ -1,10 +1,11 @@
 package uaa
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -52,7 +53,7 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
-				resource.TestStep{
+				{
 					Config: ldapUserResource,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),
@@ -80,7 +81,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
-				resource.TestStep{
+				{
 					Config: userResourceWithGroups,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),
@@ -98,7 +99,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 					),
 				},
 
-				resource.TestStep{
+				{
 					Config: userResourceWithGroupsUpdate,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),
@@ -184,8 +185,9 @@ func testAccCheckUserDestroy(username string) resource.TestCheckFunc {
 		session := testAccProvider.Meta().(*uaaapi.Session)
 		um := session.UserManager()
 		if _, err := um.FindByUsername(username); err != nil {
-			switch err.(type) {
-			case *errors.ModelNotFoundError:
+			var modelNotFoundError *cfErrors.ModelNotFoundError
+			switch {
+			case errors.As(err, &modelNotFoundError):
 				return nil
 			default:
 				return err

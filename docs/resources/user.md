@@ -33,7 +33,7 @@ The following arguments are supported:
 * `given_name` - (Optional) The given name of the user
 * `family_name` - (Optional) The family name of the user
 * `email` - (Optional) The email address of the user
-* `groups` - (Optional) Any UAA `groups` / `roles` to associated the user with
+* `groups` - (Optional) Any UAA `groups` / `roles` to associate the user with
 
 ## Attributes Reference
 

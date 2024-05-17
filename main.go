@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"log"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
 	"github.com/orange-cloudfoundry/terraform-provider-uaa/uaa"
@@ -17,14 +14,8 @@ func main() {
 	flag.Parse()
 
 	opts := &plugin.ServeOpts{
+		Debug:        debugMode,
 		ProviderFunc: uaa.Provider,
-	}
-	if debugMode {
-		err := plugin.Debug(context.Background(), "registry.terraform.io/cloudfoundry-community/cloudfoundry", opts)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return
 	}
 	plugin.Serve(opts)
 }

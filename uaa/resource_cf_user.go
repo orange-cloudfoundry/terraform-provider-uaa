@@ -19,35 +19,35 @@ func resourceUser() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"password": &schema.Schema{
+			"password": {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Sensitive: true,
 			},
-			"origin": &schema.Schema{
+			"origin": {
 				Type:     schema.TypeString,
 				ForceNew: true,
 				Optional: true,
 				Default:  "uaa",
 			},
-			"given_name": &schema.Schema{
+			"given_name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"family_name": &schema.Schema{
+			"family_name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"email": &schema.Schema{
+			"email": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
 			},
-			"groups": &schema.Schema{
+			"groups": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -172,8 +172,8 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	old, new := d.GetChange("groups")
-	rolesToDelete, rolesToAdd := getListChanges(old, new)
+	old, cur := d.GetChange("groups")
+	rolesToDelete, rolesToAdd := getListChanges(old, cur)
 
 	if len(rolesToDelete) > 0 || len(rolesToAdd) > 0 {
 		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, d.Get("origin").(string))
