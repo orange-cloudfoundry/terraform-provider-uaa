@@ -3,12 +3,13 @@ package uaaapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 
 	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"code.cloudfoundry.org/cli/cf/net"
 )
 
@@ -73,7 +74,7 @@ func newClientManager(config coreconfig.Reader, uaaGateway net.Gateway, logger *
 func (cm *ClientManager) GetClient(id string) (client *UAAClient, err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -92,7 +93,7 @@ func (cm *ClientManager) UaaEndPoint() string {
 func (cm *ClientManager) Create(nCli UAAClient) (client UAAClient, err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -103,11 +104,9 @@ func (cm *ClientManager) Create(nCli UAAClient) (client UAAClient, err error) {
 
 	client = nCli
 	err = cm.uaaGateway.CreateResource(uaaEndpoint, "/oauth/clients", bytes.NewReader(body), &client)
-	switch httpErr := err.(type) {
-	case errors.HTTPError:
-		if httpErr.StatusCode() == http.StatusConflict {
-			err = errors.NewModelAlreadyExistsError("client", nCli.ClientID)
-		}
+	var httpErr cfErrors.HTTPError
+	if errors.As(err, &httpErr) && httpErr.StatusCode() == http.StatusConflict {
+		err = cfErrors.NewModelAlreadyExistsError("client", nCli.ClientID)
 	}
 	return
 }
@@ -116,7 +115,7 @@ func (cm *ClientManager) Create(nCli UAAClient) (client UAAClient, err error) {
 func (cm *ClientManager) UpdateClient(nCli *UAAClient) (client UAAClient, err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -141,7 +140,7 @@ func (cm *ClientManager) UpdateClient(nCli *UAAClient) (client UAAClient, err er
 func (cm *ClientManager) DeleteClient(id string) (err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 	err = cm.uaaGateway.DeleteResource(uaaEndpoint, fmt.Sprintf("/oauth/clients/%s", id))
@@ -152,7 +151,7 @@ func (cm *ClientManager) DeleteClient(id string) (err error) {
 func (cm *ClientManager) ChangeSecret(id, oldSecret, newSecret string) (err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -188,7 +187,7 @@ func (cm *ClientManager) ChangeSecret(id, oldSecret, newSecret string) (err erro
 func (cm *ClientManager) FindByClientID(clientID string) (client UAAClient, err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -202,7 +201,7 @@ func (cm *ClientManager) FindByClientID(clientID string) (client UAAClient, err 
 		if len(clientResourceList.Resources) > 0 {
 			client = clientResourceList.Resources[0]
 		} else {
-			err = errors.NewModelNotFoundError("Client", clientID)
+			err = cfErrors.NewModelNotFoundError("Client", clientID)
 		}
 	}
 	return

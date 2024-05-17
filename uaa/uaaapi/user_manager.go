@@ -3,12 +3,13 @@ package uaaapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 
 	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"code.cloudfoundry.org/cli/cf/net"
 )
 
@@ -78,7 +79,7 @@ func (um *UserManager) loadGroups() (err error) {
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -137,7 +138,7 @@ func (um *UserManager) GetUser(id string) (user *UAAUser, err error) {
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -155,7 +156,7 @@ func (um *UserManager) CreateUser(
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -181,11 +182,9 @@ func (um *UserManager) CreateUser(
 
 	user = UAAUser{}
 	err = um.uaaGateway.CreateResource(uaaEndpoint, "/Users", bytes.NewReader(body), &user)
-	switch httpErr := err.(type) {
-	case errors.HTTPError:
-		if httpErr.StatusCode() == http.StatusConflict {
-			err = errors.NewModelAlreadyExistsError("user", username)
-		}
+	var httpErr cfErrors.HTTPError
+	if errors.As(err, &httpErr) && httpErr.StatusCode() == http.StatusConflict {
+		err = cfErrors.NewModelAlreadyExistsError("user", username)
 	}
 	return
 }
@@ -196,7 +195,7 @@ func (um *UserManager) UpdateUser(
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -237,7 +236,7 @@ func (um *UserManager) DeleteUser(id string) (err error) {
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 	err = um.uaaGateway.DeleteResource(uaaEndpoint, fmt.Sprintf("/Users/%s", id))
@@ -250,7 +249,7 @@ func (um *UserManager) ChangePassword(
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -284,7 +283,7 @@ func (um *UserManager) UpdateRoles(
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -327,7 +326,7 @@ func (um *UserManager) FindByUsername(username string) (user UAAUser, err error)
 
 	uaaEndpoint := um.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
-		err = errors.New("UAA endpoint missing from config file")
+		err = cfErrors.New("UAA endpoint missing from config file")
 		return
 	}
 
@@ -341,7 +340,7 @@ func (um *UserManager) FindByUsername(username string) (user UAAUser, err error)
 		if len(userResourceList.Resources) > 0 {
 			user = userResourceList.Resources[0]
 		} else {
-			err = errors.NewModelNotFoundError("User", username)
+			err = cfErrors.NewModelNotFoundError("User", username)
 		}
 	}
 	return
