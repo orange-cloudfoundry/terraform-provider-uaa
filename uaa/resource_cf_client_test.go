@@ -58,7 +58,7 @@ func TestAccClient_normal(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config: clientResource,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -68,7 +68,7 @@ func TestAccClient_normal(t *testing.T) {
 						testCheckResourceSet(ref, "redirect_uri", []string{"https://uaa.local.pcfdev.io/login"}),
 					),
 				},
-				resource.TestStep{
+				{
 					Config: clientResourceUpdateSecret,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -92,7 +92,7 @@ func TestAccClient_scope(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config: clientResourceWithScope,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckClientExists(ref),
@@ -116,7 +116,7 @@ func TestAccClient_createError(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			CheckDestroy:      testAccCheckClientDestroy(clientid),
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config:      clientResourceWithoutSecret,
 					ExpectError: regexp.MustCompile(".*Client secret is required for client_credentials.*"),
 				},

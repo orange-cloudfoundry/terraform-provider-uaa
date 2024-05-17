@@ -12,32 +12,32 @@ func Provider() *schema.Provider {
 
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"login_endpoint": &schema.Schema{
+			"login_endpoint": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_LOGIN_URL", ""),
 			},
-			"auth_endpoint": &schema.Schema{
+			"auth_endpoint": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_AUTH_URL", ""),
 			},
-			"client_id": &schema.Schema{
+			"client_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_CLIENT_ID", ""),
 			},
-			"client_secret": &schema.Schema{
+			"client_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_CLIENT_SECRET", ""),
 			},
-			"ca_cert": &schema.Schema{
+			"ca_cert": {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_CA_CERT", ""),
 			},
-			"skip_ssl_validation": &schema.Schema{
+			"skip_ssl_validation": {
 				Type:        schema.TypeBool,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("UAA_SKIP_SSL_VALIDATION", "true"),
