@@ -3,6 +3,7 @@ package uaaapi
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -10,7 +11,7 @@ import (
 	"time"
 
 	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"code.cloudfoundry.org/cli/cf/i18n"
 	"code.cloudfoundry.org/cli/cf/net"
 )
@@ -18,7 +19,7 @@ import (
 // Note - This file was copied from github.com/cloudfoundry/cli/cf/api/authentication
 // so the AuthManager can be extended with capabilities not present in CF CLI code
 
-var errPreventRedirect = errors.New("prevent-redirect")
+var errPreventRedirect = cfErrors.New("prevent-redirect")
 
 // AuthManager -
 type AuthManager struct {
@@ -98,21 +99,22 @@ func (tm *AuthManager) Authorize(token string) (string, error) {
 		tm.DumpResponse(resp)
 	}
 	if err == nil {
-		return "", errors.New(i18n.T("Authorization server did not redirect with one time code"))
+		return "", cfErrors.New(i18n.T("Authorization server did not redirect with one time code"))
 	}
 
-	if netErr, ok := err.(*url.Error); !ok || netErr.Err != errPreventRedirect {
-		return "", errors.New(i18n.T("Error requesting one time code from server: {{.Error}}", map[string]interface{}{"Error": err.Error()}))
+	var netErr *url.Error
+	if !errors.As(err, &netErr) || !errors.Is(netErr.Err, errPreventRedirect) {
+		return "", cfErrors.New(i18n.T("Error requesting one time code from server: {{.Error}}", map[string]interface{}{"Error": err.Error()}))
 	}
 
 	loc, err := resp.Location()
 	if err != nil {
-		return "", errors.New(i18n.T("Error getting the redirected location: {{.Error}}", map[string]interface{}{"Error": err.Error()}))
+		return "", cfErrors.New(i18n.T("Error getting the redirected location: {{.Error}}", map[string]interface{}{"Error": err.Error()}))
 	}
 
 	codes := loc.Query()["code"]
 	if len(codes) != 1 {
-		return "", errors.New(i18n.T("Unable to acquire one time code from authorization response"))
+		return "", cfErrors.New(i18n.T("Unable to acquire one time code from authorization response"))
 	}
 
 	return codes[0], nil
@@ -131,13 +133,14 @@ func (tm *AuthManager) Authenticate(credentials map[string]string) error {
 
 	response, err := tm.getAuthToken("cf", "", data)
 	if err != nil {
-		httpError, ok := err.(errors.HTTPError)
+		var httpError cfErrors.HTTPError
+		ok := errors.As(err, &httpError)
 		if ok {
 			switch {
 			case httpError.StatusCode() == http.StatusUnauthorized:
-				return errors.New(i18n.T("Credentials were rejected, please try again."))
+				return cfErrors.New(i18n.T("Credentials were rejected, please try again."))
 			case httpError.StatusCode() >= http.StatusInternalServerError:
-				return errors.New(i18n.T("The targeted API endpoint could not be reached."))
+				return cfErrors.New(i18n.T("The targeted API endpoint could not be reached."))
 			}
 		}
 		return err
@@ -157,13 +160,14 @@ func (tm *AuthManager) GetClientToken(clientID, clientSecret string) (clientToke
 
 	response, err := tm.getAuthToken(clientID, clientSecret, data)
 	if err != nil {
-		httpError, ok := err.(errors.HTTPError)
+		var httpError cfErrors.HTTPError
+		ok := errors.As(err, &httpError)
 		if ok {
 			switch {
 			case httpError.StatusCode() == http.StatusUnauthorized:
-				err = errors.New(i18n.T("Credentials were rejected, please try again."))
+				err = cfErrors.New(i18n.T("Credentials were rejected, please try again."))
 			case httpError.StatusCode() >= http.StatusInternalServerError:
-				err = errors.New(i18n.T("The targeted API endpoint could not be reached."))
+				err = cfErrors.New(i18n.T("The targeted API endpoint could not be reached."))
 			}
 		}
 		return
@@ -176,7 +180,7 @@ func (tm *AuthManager) GetClientToken(clientID, clientSecret string) (clientToke
 	return
 }
 
-// RefreshAuthToken -
+// RefreshToken -
 func (tm *AuthManager) RefreshToken() (string, error) {
 	data := url.Values{
 		"refresh_token": {tm.config.RefreshToken()},
@@ -211,17 +215,17 @@ func (tm *AuthManager) getAuthToken(clientID, clientSecret string, data url.Valu
 
 	switch err.(type) {
 	case nil:
-	case errors.HTTPError:
+	case cfErrors.HTTPError:
 		return nil, err
-	case *errors.InvalidTokenError:
-		return nil, errors.New(i18n.T("Authentication has expired.."))
+	case *cfErrors.InvalidTokenError:
+		return nil, cfErrors.New(i18n.T("Authentication has expired.."))
 	default:
 		return nil, fmt.Errorf("%s: %s", i18n.T("auth request failed"), err.Error())
 	}
 
 	// TODO: get the actual status code
 	if len(response.Error.Code) > 0 {
-		return nil, errors.NewHTTPError(0, response.Error.Code, response.Error.Description)
+		return nil, cfErrors.NewHTTPError(0, response.Error.Code, response.Error.Description)
 	}
 
 	return response, nil

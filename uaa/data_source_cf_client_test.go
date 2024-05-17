@@ -30,7 +30,7 @@ func TestAccDataSourceClient_normal(t *testing.T) {
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config: clientDataResource,
 					Check: resource.ComposeTestCheckFunc(
 						checkDataSourceClientExists(ref),
@@ -56,7 +56,7 @@ func TestAccDataSourceClient_notfound(t *testing.T) {
 			PreCheck:          func() { testAccPreCheck(t) },
 			ProviderFactories: testAccProvidersFactories,
 			Steps: []resource.TestStep{
-				resource.TestStep{
+				{
 					Config:      clientDataResourceNotFound,
 					ExpectError: regexp.MustCompile(".*Client does-not-exist not found.*"),
 				},

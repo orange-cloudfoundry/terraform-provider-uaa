@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ahmadnassri/action-dependabot-auto-merge@v2.6.6
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
           config: .github/auto-merge.yml
           command: "squash and merge"
