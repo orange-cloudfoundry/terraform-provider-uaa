@@ -303,10 +303,6 @@ github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.2
 ## explicit
 github.com/mitchellh/reflectwalk
-# github.com/moby/moby v20.10.5+incompatible
-## explicit
-# github.com/moby/term v0.0.0-20201216013528-df9cb8a40635
-## explicit; go 1.13
 # github.com/oklog/run v1.1.0
 ## explicit; go 1.13
 github.com/oklog/run
