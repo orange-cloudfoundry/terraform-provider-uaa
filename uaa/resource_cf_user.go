@@ -172,8 +172,8 @@ func resourceUserUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	old, new := d.GetChange("groups")
-	rolesToDelete, rolesToAdd := getListChanges(old, new)
+	old, cur := d.GetChange("groups")
+	rolesToDelete, rolesToAdd := getListChanges(old, cur)
 
 	if len(rolesToDelete) > 0 || len(rolesToAdd) > 0 {
 		err := um.UpdateRoles(id, rolesToDelete, rolesToAdd, d.Get("origin").(string))

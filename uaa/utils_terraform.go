@@ -68,8 +68,8 @@ func getChangedValueStringList(key string, updated *bool, d *schema.ResourceData
 
 // getResourceChange -
 func getResourceChange(key string, d *schema.ResourceData) (bool, string, string) {
-	old, new := d.GetChange(key)
-	return old != new, old.(string), new.(string)
+	old, cur := d.GetChange(key)
+	return old != cur, old.(string), cur.(string)
 }
 
 // getListChanges -
