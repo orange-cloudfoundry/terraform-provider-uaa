@@ -9,7 +9,7 @@ func getChangedValueString(key string, updated *bool, d *schema.ResourceData) *s
 
 	if d.HasChange(key) {
 		vv := d.Get(key).(string)
-		*updated = *updated || true
+		*updated = true
 		return &vv
 	} else if v, ok := d.GetOk(key); ok {
 		vv := v.(string)
@@ -23,7 +23,7 @@ func getChangedValueInt(key string, updated *bool, d *schema.ResourceData) *int 
 
 	if d.HasChange(key) {
 		vv := d.Get(key).(int)
-		*updated = *updated || true
+		*updated = true
 		return &vv
 	} else if v, ok := d.GetOk(key); ok {
 		vv := v.(int)
@@ -37,7 +37,7 @@ func getChangedValueBool(key string, updated *bool, d *schema.ResourceData) *boo
 
 	if d.HasChange(key) {
 		vv := d.Get(key).(bool)
-		*updated = *updated || true
+		*updated = true
 		return &vv
 	} else if v, ok := d.GetOk(key); ok {
 		vv := v.(bool)
@@ -52,7 +52,7 @@ func getChangedValueStringList(key string, updated *bool, d *schema.ResourceData
 
 	if d.HasChange(key) {
 		a = d.Get(key).(*schema.Set).List()
-		*updated = *updated || true
+		*updated = true
 	} else if v, ok := d.GetOk(key); ok {
 		a = v.(*schema.Set).List()
 	}
