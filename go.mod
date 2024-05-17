@@ -21,8 +21,6 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.33.0
 	github.com/kr/pretty v0.3.1
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
-	github.com/moby/moby v20.10.5+incompatible // indirect
-	github.com/moby/term v0.0.0-20201216013528-df9cb8a40635 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20201211210132-54b8a0bf510f // indirect
 	github.com/vito/go-interact v1.0.0 // indirect
 )
