@@ -88,7 +88,7 @@ func (cm *ClientManager) UaaEndPoint() string {
 	return cm.config.UaaEndpoint()
 }
 
-// CreateClient -
+// Create - Create a client
 func (cm *ClientManager) Create(nCli UAAClient) (client UAAClient, err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {
@@ -148,7 +148,7 @@ func (cm *ClientManager) DeleteClient(id string) (err error) {
 	return
 }
 
-// ChangePassword -
+// ChangeSecret - Change the password/secret
 func (cm *ClientManager) ChangeSecret(id, oldSecret, newSecret string) (err error) {
 	uaaEndpoint := cm.config.UaaEndpoint()
 	if len(uaaEndpoint) == 0 {

@@ -52,7 +52,7 @@ func TestAccUser_LdapOrigin_normal(t *testing.T) {
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
-				resource.TestStep{
+				{
 					Config: ldapUserResource,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),
@@ -80,7 +80,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 			CheckDestroy:      testAccCheckUserDestroy(username),
 			Steps: []resource.TestStep{
 
-				resource.TestStep{
+				{
 					Config: userResourceWithGroups,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),
@@ -98,7 +98,7 @@ func TestAccUser_WithGroups_normal(t *testing.T) {
 					),
 				},
 
-				resource.TestStep{
+				{
 					Config: userResourceWithGroupsUpdate,
 					Check: resource.ComposeTestCheckFunc(
 						testAccCheckUserExists(ref),

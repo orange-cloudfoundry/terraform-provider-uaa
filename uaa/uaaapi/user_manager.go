@@ -296,7 +296,7 @@ func (um *UserManager) UpdateRoles(
 	for _, s := range scopesToAdd {
 		roleID, exists := um.groupMap[s]
 		if !exists {
-			err = fmt.Errorf("Group '%s' was not found", s)
+			err = fmt.Errorf("group '%s' was not found", s)
 			return
 		}
 

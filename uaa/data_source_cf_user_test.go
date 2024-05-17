@@ -27,7 +27,7 @@ func TestAccDataSourceUser_normal(t *testing.T) {
 			ProviderFactories: testAccProvidersFactories,
 			Steps: []resource.TestStep{
 
-				resource.TestStep{
+				{
 					Config: userDataResource,
 					Check: resource.ComposeTestCheckFunc(
 						checkDataSourceUserExists(ref),
