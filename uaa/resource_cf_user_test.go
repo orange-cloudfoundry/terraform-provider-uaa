@@ -1,10 +1,11 @@
 package uaa
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
-	"code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/cf/errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -184,8 +185,9 @@ func testAccCheckUserDestroy(username string) resource.TestCheckFunc {
 		session := testAccProvider.Meta().(*uaaapi.Session)
 		um := session.UserManager()
 		if _, err := um.FindByUsername(username); err != nil {
-			switch err.(type) {
-			case *errors.ModelNotFoundError:
+			var modelNotFoundError *cfErrors.ModelNotFoundError
+			switch {
+			case errors.As(err, &modelNotFoundError):
 				return nil
 			default:
 				return err
