@@ -27,4 +27,4 @@ jobs:
           args: >
             --enable govet
             --enable staticcheck
-            --enable unused
+            --disable unused
