@@ -2,6 +2,7 @@ package uaa
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/orange-cloudfoundry/terraform-provider-uaa/uaa/uaaapi"
 )
@@ -52,8 +53,13 @@ func dataSourceGroupRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 
 	d.SetId(group.ID)
-	d.Set("description", group.Description)
-	d.Set("zone_id", group.ZoneId)
-
+	err = d.Set("description", group.Description)
+	if err != nil {
+		return fmt.Errorf("error setting description: %s", err)
+	}
+	err = d.Set("zone_id", group.ZoneId)
+	if err != nil {
+		return fmt.Errorf("error setting zone_id: %s", err)
+	}
 	return
 }
