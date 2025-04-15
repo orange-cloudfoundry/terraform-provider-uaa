@@ -74,7 +74,10 @@ func resourceUserCreate(d *schema.ResourceData, meta interface{}) error {
 	if val, ok := d.GetOk("email"); ok {
 		email = val.(string)
 	} else {
-		d.Set("email", email)
+		err := d.Set("email", email)
+		if err != nil {
+			return fmt.Errorf("error setting email: %s", err)
+		}
 	}
 
 	um := session.UserManager()
@@ -105,11 +108,26 @@ func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	session.Log.DebugMessage("User with GUID '%s' retrieved: %# v", id, user)
 
-	d.Set("name", user.Username)
-	d.Set("origin", user.Origin)
-	d.Set("given_name", user.Name.GivenName)
-	d.Set("family_name", user.Name.FamilyName)
-	d.Set("email", user.Emails[0].Value)
+	err = d.Set("name", user.Username)
+	if err != nil {
+		return fmt.Errorf("error setting name: %s", err)
+	}
+	err = d.Set("origin", user.Origin)
+	if err != nil {
+		return fmt.Errorf("error setting origin: %s", err)
+	}
+	err = d.Set("given_name", user.Name.GivenName)
+	if err != nil {
+		return fmt.Errorf("error setting given_name: %s", err)
+	}
+	err = d.Set("family_name", user.Name.FamilyName)
+	if err != nil {
+		return fmt.Errorf("error setting family_name: %s", err)
+	}
+	err = d.Set("email", user.Emails[0].Value)
+	if err != nil {
+		return fmt.Errorf("error setting email: %s", err)
+	}
 
 	var groups []interface{}
 	for _, g := range user.Groups {
@@ -117,7 +135,10 @@ func resourceUserRead(d *schema.ResourceData, meta interface{}) error {
 			groups = append(groups, g.Display)
 		}
 	}
-	d.Set("groups", schema.NewSet(resourceStringHash, groups))
+	err = d.Set("groups", schema.NewSet(resourceStringHash, groups))
+	if err != nil {
+		return fmt.Errorf("error setting groups: %s", err)
+	}
 
 	return nil
 }

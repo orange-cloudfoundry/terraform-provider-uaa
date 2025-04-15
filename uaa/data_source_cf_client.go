@@ -116,20 +116,65 @@ func dataSourceClientRead(d *schema.ResourceData, meta interface{}) (err error) 
 	}
 
 	d.SetId(client.ClientID)
-	d.Set("scope", schema.NewSet(resourceStringHash, toInterface(client.Scope)))
-	d.Set("authorities", schema.NewSet(resourceStringHash, toInterface(client.Authorities)))
-	d.Set("resource_ids", schema.NewSet(resourceStringHash, toInterface(client.ResourceIds)))
-	d.Set("authorized_grant_types", schema.NewSet(resourceStringHash, toInterface(client.AuthorizedGrantTypes)))
-	d.Set("redirect_uri", schema.NewSet(resourceStringHash, toInterface(client.RedirectURI)))
-	d.Set("autoapprove", schema.NewSet(resourceStringHash, toInterface(client.Autoapprove)))
-	d.Set("allowedproviders", schema.NewSet(resourceStringHash, toInterface(client.Allowedproviders)))
-	d.Set("required_user_groups", schema.NewSet(resourceStringHash, toInterface(client.RequiredUserGroups)))
-	d.Set("client_id", client.ClientID)
-	d.Set("access_token_validity", client.AccessTokenValidity)
-	d.Set("refresh_token_validity", client.RefreshTokenValidity)
-	d.Set("name", client.Name)
-	d.Set("token_salt", client.TokenSalt)
-	d.Set("createdwith", client.CreatedWith)
-	d.Set("approvals_deleted", client.ApprovalsDeleted)
+	err = d.Set("scope", schema.NewSet(resourceStringHash, toInterface(client.Scope)))
+	if err != nil {
+		return fmt.Errorf("error while setting scope data to client '%s'", err)
+	}
+	err = d.Set("authorities", schema.NewSet(resourceStringHash, toInterface(client.Authorities)))
+	if err != nil {
+		return fmt.Errorf("error while authorities scope data to client '%s'", err)
+	}
+	err = d.Set("resource_ids", schema.NewSet(resourceStringHash, toInterface(client.ResourceIds)))
+	if err != nil {
+		return fmt.Errorf("error while setting resource_ids data to client '%s'", err)
+	}
+	err = d.Set("authorized_grant_types", schema.NewSet(resourceStringHash, toInterface(client.AuthorizedGrantTypes)))
+	if err != nil {
+		return fmt.Errorf("error while setting authorized_grant_types data to client '%s'", err)
+	}
+	err = d.Set("redirect_uri", schema.NewSet(resourceStringHash, toInterface(client.RedirectURI)))
+	if err != nil {
+		return fmt.Errorf("error while setting redirect_uri data to client '%s'", err)
+	}
+	err = d.Set("autoapprove", schema.NewSet(resourceStringHash, toInterface(client.Autoapprove)))
+	if err != nil {
+		return fmt.Errorf("error while setting autoapprove data to client '%s'", err)
+	}
+	err = d.Set("allowedproviders", schema.NewSet(resourceStringHash, toInterface(client.Allowedproviders)))
+	if err != nil {
+		return fmt.Errorf("error while setting allowedproviders data to client '%s'", err)
+	}
+	err = d.Set("required_user_groups", schema.NewSet(resourceStringHash, toInterface(client.RequiredUserGroups)))
+	if err != nil {
+		return fmt.Errorf("error while setting required_user_groups data to client '%s'", err)
+	}
+	err = d.Set("client_id", client.ClientID)
+	if err != nil {
+		return fmt.Errorf("error while setting client_id data to client '%s'", err)
+	}
+	err = d.Set("access_token_validity", client.AccessTokenValidity)
+	if err != nil {
+		return fmt.Errorf("error while setting access_token_validity data to client '%s'", err)
+	}
+	err = d.Set("refresh_token_validity", client.RefreshTokenValidity)
+	if err != nil {
+		return fmt.Errorf("error while setting refresh_token_validity data to client '%s'", err)
+	}
+	err = d.Set("name", client.Name)
+	if err != nil {
+		return fmt.Errorf("error while setting name data to client '%s'", err)
+	}
+	err = d.Set("token_salt", client.TokenSalt)
+	if err != nil {
+		return fmt.Errorf("error while setting token_salt data to client '%s'", err)
+	}
+	err = d.Set("createdwith", client.CreatedWith)
+	if err != nil {
+		return fmt.Errorf("error while setting createdwith data to client '%s'", err)
+	}
+	err = d.Set("approvals_deleted", client.ApprovalsDeleted)
+	if err != nil {
+		return fmt.Errorf("error while setting approvals_deleted data to client '%s'", err)
+	}
 	return
 }
