@@ -9,15 +9,11 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
-	"github.com/orange-cloudfoundry/terraform-provider-uaa/uaa/uaaapi"
 )
 
 var testAccProviders map[string]*schema.Provider
 var testAccProvider *schema.Provider
 var testAccProvidersFactories map[string]func() (*schema.Provider, error)
-
-var tstSession *uaaapi.Session
 
 func init() {
 
