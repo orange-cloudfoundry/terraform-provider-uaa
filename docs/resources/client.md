@@ -25,8 +25,8 @@ resource "uaa_client" "admin-service-client" {
 The following arguments are supported:
 
 * `client_id` - (Required) Client identifier, unique within identity zone.
-* `authorized_grant_types` - (Required) List of grant types that can be used to obtain a token with this client. Can include authorization_code, password, implicit, and/or client_credentials.
-* `redirect_uri` - (Required) Allowed URI pattern for redirect during authorization. Wildcard patterns can be specified using the Ant-style pattern.
+* `authorized_grant_types` - (Optional) List of grant types that can be used to obtain a token with this client. Can include authorization_code, password, implicit, and/or client_credentials.
+* `redirect_uri` - (Optional) Allowed URI pattern for redirect during authorization. Wildcard patterns can be specified using the Ant-style pattern.
 * `scope` - (Optional) Scopes allowed for the client.
 * `resource_ids` - (Optional) Resources the client is allowed access to.
 * `authorities` - (Optional) Scopes which the client is able to grant when creating a client.
