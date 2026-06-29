@@ -46,7 +46,7 @@ func NewLogger(debug bool, tracePath string) *Logger {
 
 // LogMessage -
 func (l *Logger) LogMessage(format string, v ...interface{}) {
-	l.debugPrinter.Printf(format, v)
+	l.debugPrinter.Printf(format, v...)
 }
 
 // DebugMessage -
@@ -57,7 +57,7 @@ func (l *Logger) DebugMessage(format string, v ...interface{}) {
 			k := reflect.ValueOf(o).Kind()
 			if k == reflect.Struct ||
 				k == reflect.Interface ||
-				k == reflect.Ptr ||
+				k.String() == "ptr" ||
 				k == reflect.Slice ||
 				k == reflect.Map {
 				vv = append(vv, pretty.Formatter(o))

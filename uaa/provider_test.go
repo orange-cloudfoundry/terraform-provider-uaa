@@ -79,17 +79,18 @@ func assertEquals(attributes map[string]string,
 	v, ok := attributes[key]
 
 	expectedValue := reflect.ValueOf(expected)
+	expectedKind := expectedValue.Kind()
 
 	if ok {
 
 		var s string
-		if expectedValue.Kind() == reflect.Ptr {
+		if expectedKind.String() == "ptr" {
 
 			if expectedValue.IsNil() {
 				return fmt.Errorf("expected resource '%s' to not be present but it was '%s'", key, v)
 			}
 
-			expectedValueContent := reflect.Indirect(reflect.ValueOf(expected))
+			expectedValueContent := reflect.Indirect(expectedValue)
 			switch expectedValueContent.Kind() {
 			case reflect.String:
 				s = expectedValueContent.String()
@@ -115,7 +116,7 @@ func assertEquals(attributes map[string]string,
 		if v != s {
 			return fmt.Errorf("expected resource '%s' to be '%s' but it was '%s'", key, expected, v)
 		}
-	} else if expectedValue.Kind() == reflect.Ptr && !expectedValue.IsNil() {
+	} else if expectedKind.String() == "ptr" && !expectedValue.IsNil() {
 		return fmt.Errorf("expected resource '%s' to be '%s' but it was not present", key, reflect.Indirect(reflect.ValueOf(expected)))
 	}
 	return nil
