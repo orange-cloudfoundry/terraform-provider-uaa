@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	cfErrors "code.cloudfoundry.org/cli/cf/errors"
-	"code.cloudfoundry.org/cli/cf/net"
+	"code.cloudfoundry.org/cli/v9/cf/configuration/coreconfig"
+	cfErrors "code.cloudfoundry.org/cli/v9/cf/errors"
+	"code.cloudfoundry.org/cli/v9/cf/net"
 )
 
 // UserManager -

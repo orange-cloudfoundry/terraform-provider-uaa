@@ -381,10 +381,10 @@ func updateClientJwtConfig(um *uaaapi.ClientManager, id string, oldCfg, newCfg *
 
 	if !jsonEquivalent(string(oldCfg.Jwks), string(newCfg.Jwks)) {
 		if len(oldCfg.Jwks) > 0 {
-			deletes = append(deletes, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: string(oldCfg.Jwks), ChangeMode: "DELETE"})
+			deletes = append(deletes, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: oldCfg.Jwks, ChangeMode: "DELETE"})
 		}
 		if len(newCfg.Jwks) > 0 {
-			adds = append(adds, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: string(newCfg.Jwks), ChangeMode: "ADD"})
+			adds = append(adds, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: newCfg.Jwks, ChangeMode: "ADD"})
 		}
 	}
 

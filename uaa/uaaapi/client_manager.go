@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	cfErrors "code.cloudfoundry.org/cli/cf/errors"
-	"code.cloudfoundry.org/cli/cf/net"
+	"code.cloudfoundry.org/cli/v9/cf/configuration/coreconfig"
+	cfErrors "code.cloudfoundry.org/cli/v9/cf/errors"
+	"code.cloudfoundry.org/cli/v9/cf/net"
 )
 
 // ClientManager -
@@ -91,14 +91,14 @@ func (c *ClientJwtConfig) UnmarshalJSON(data []byte) error {
 
 // ClientJwtChangeRequest - body of PUT /oauth/clients/{client_id}/clientjwt
 type ClientJwtChangeRequest struct {
-	ClientID   string `json:"client_id"`
-	JwksURI    string `json:"jwks_uri,omitempty"`
-	Jwks       string `json:"jwks,omitempty"`
-	Iss        string `json:"iss,omitempty"`
-	Sub        string `json:"sub,omitempty"`
-	Aud        string `json:"aud,omitempty"`
-	Kid        string `json:"kid,omitempty"`
-	ChangeMode string `json:"changeMode,omitempty"`
+	ClientID   string          `json:"client_id"`
+	JwksURI    string          `json:"jwks_uri,omitempty"`
+	Jwks       json.RawMessage `json:"jwks,omitempty"`
+	Iss        string          `json:"iss,omitempty"`
+	Sub        string          `json:"sub,omitempty"`
+	Aud        string          `json:"aud,omitempty"`
+	Kid        string          `json:"kid,omitempty"`
+	ChangeMode string          `json:"changeMode,omitempty"`
 }
 
 // UAAClientResourceList -

@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"testing"
 
-	cfErrors "code.cloudfoundry.org/cli/cf/errors"
+	cfErrors "code.cloudfoundry.org/cli/v9/cf/errors"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
