@@ -1,7 +1,9 @@
 package uaa
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -98,6 +100,45 @@ func resourceClient() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Set:      resourceStringHash,
 			},
+			"client_jwt_config": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"jwks_uri": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"jwks": {
+							Type:             schema.TypeString,
+							Optional:         true,
+							ValidateFunc:     validateJSONString,
+							DiffSuppressFunc: suppressEquivalentJSON,
+						},
+						"jwt_creds": {
+							Type:     schema.TypeSet,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"iss": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"sub": {
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"aud": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -126,6 +167,7 @@ func resourceClientCreate(d *schema.ResourceData, meta interface{}) error {
 		TokenSalt:            d.Get("token_salt").(string),
 		CreatedWith:          d.Get("createdwith").(string),
 		ApprovalsDeleted:     d.Get("approvals_deleted").(bool),
+		ClientJwtConfig:      expandClientJwtConfig(d.Get("client_jwt_config")),
 	}
 
 	um := session.ClientManager()
@@ -224,6 +266,10 @@ func resourceClientRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("error while setting required_user_groups data to client '%s'", err)
 	}
+	err = d.Set("client_jwt_config", flattenClientJwtConfig(client.ClientJwtConfig, d))
+	if err != nil {
+		return fmt.Errorf("error while setting client_jwt_config data to client '%s'", err)
+	}
 
 	return nil
 }
@@ -298,9 +344,155 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 			}
 			session.Log.DebugMessage("Secret for client with id '%s' updated.", id)
 		}
+
+		if d.HasChange("client_jwt_config") {
+			oldCfg, newCfg := d.GetChange("client_jwt_config")
+			err := updateClientJwtConfig(um, id, expandClientJwtConfig(oldCfg), expandClientJwtConfig(newCfg))
+			if err != nil {
+				return err
+			}
+			session.Log.DebugMessage("JWT configuration for client with id '%s' updated.", id)
+		}
 	}
 
 	return nil
+}
+
+// updateClientJwtConfig removes trust entries that are no longer configured, then adds the new ones.
+// Deletions go first because UAA merges additions into the existing configuration.
+func updateClientJwtConfig(um *uaaapi.ClientManager, id string, oldCfg, newCfg *uaaapi.ClientJwtConfig) error {
+	if oldCfg == nil {
+		oldCfg = &uaaapi.ClientJwtConfig{}
+	}
+	if newCfg == nil {
+		newCfg = &uaaapi.ClientJwtConfig{}
+	}
+
+	var deletes, adds []uaaapi.ClientJwtChangeRequest
+
+	if oldCfg.JwksURI != newCfg.JwksURI {
+		if oldCfg.JwksURI != "" {
+			deletes = append(deletes, uaaapi.ClientJwtChangeRequest{ClientID: id, JwksURI: oldCfg.JwksURI, ChangeMode: "DELETE"})
+		}
+		if newCfg.JwksURI != "" {
+			adds = append(adds, uaaapi.ClientJwtChangeRequest{ClientID: id, JwksURI: newCfg.JwksURI, ChangeMode: "ADD"})
+		}
+	}
+
+	if !jsonEquivalent(string(oldCfg.Jwks), string(newCfg.Jwks)) {
+		if len(oldCfg.Jwks) > 0 {
+			deletes = append(deletes, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: string(oldCfg.Jwks), ChangeMode: "DELETE"})
+		}
+		if len(newCfg.Jwks) > 0 {
+			adds = append(adds, uaaapi.ClientJwtChangeRequest{ClientID: id, Jwks: string(newCfg.Jwks), ChangeMode: "ADD"})
+		}
+	}
+
+	for _, c := range oldCfg.JwtCreds {
+		if !containsJwtCred(newCfg.JwtCreds, c) {
+			deletes = append(deletes, uaaapi.ClientJwtChangeRequest{ClientID: id, Iss: c.Issuer, Sub: c.Subject, Aud: c.Audience, ChangeMode: "DELETE"})
+		}
+	}
+	for _, c := range newCfg.JwtCreds {
+		if !containsJwtCred(oldCfg.JwtCreds, c) {
+			adds = append(adds, uaaapi.ClientJwtChangeRequest{ClientID: id, Iss: c.Issuer, Sub: c.Subject, Aud: c.Audience, ChangeMode: "ADD"})
+		}
+	}
+
+	for _, req := range append(deletes, adds...) {
+		if err := um.ChangeClientJwt(req); err != nil {
+			return fmt.Errorf("error while changing client_jwt_config of client '%s': %s", id, err)
+		}
+	}
+	return nil
+}
+
+func containsJwtCred(list []uaaapi.ClientJwtCredential, c uaaapi.ClientJwtCredential) bool {
+	for _, e := range list {
+		if e == c {
+			return true
+		}
+	}
+	return false
+}
+
+func expandClientJwtConfig(v interface{}) *uaaapi.ClientJwtConfig {
+	l, ok := v.([]interface{})
+	if !ok || len(l) == 0 || l[0] == nil {
+		return nil
+	}
+	m := l[0].(map[string]interface{})
+
+	cfg := &uaaapi.ClientJwtConfig{JwksURI: m["jwks_uri"].(string)}
+	if jwks := m["jwks"].(string); jwks != "" {
+		cfg.Jwks = json.RawMessage(jwks)
+	}
+	if creds, ok := m["jwt_creds"].(*schema.Set); ok {
+		for _, raw := range creds.List() {
+			c := raw.(map[string]interface{})
+			cfg.JwtCreds = append(cfg.JwtCreds, uaaapi.ClientJwtCredential{
+				Issuer:   c["iss"].(string),
+				Subject:  c["sub"].(string),
+				Audience: c["aud"].(string),
+			})
+		}
+	}
+	if cfg.IsEmpty() {
+		return nil
+	}
+	return cfg
+}
+
+func flattenClientJwtConfig(cfg *uaaapi.ClientJwtConfig, d *schema.ResourceData) []interface{} {
+	if cfg.IsEmpty() {
+		return []interface{}{}
+	}
+
+	jwks := ""
+	if len(cfg.Jwks) > 0 {
+		jwks = string(cfg.Jwks)
+		// UAA normalizes stored keys, keep the configured representation to avoid spurious diffs
+		if v, ok := d.GetOk("client_jwt_config.0.jwks"); ok {
+			jwks = v.(string)
+		}
+	}
+
+	creds := make([]interface{}, 0, len(cfg.JwtCreds))
+	for _, c := range cfg.JwtCreds {
+		creds = append(creds, map[string]interface{}{
+			"iss": c.Issuer,
+			"sub": c.Subject,
+			"aud": c.Audience,
+		})
+	}
+
+	return []interface{}{map[string]interface{}{
+		"jwks_uri":  cfg.JwksURI,
+		"jwks":      jwks,
+		"jwt_creds": creds,
+	}}
+}
+
+func validateJSONString(v interface{}, k string) (ws []string, errs []error) {
+	if s := v.(string); s != "" && !json.Valid([]byte(s)) {
+		errs = append(errs, fmt.Errorf("%q must be a valid JSON string", k))
+	}
+	return
+}
+
+func suppressEquivalentJSON(_, old, new string, _ *schema.ResourceData) bool {
+	return jsonEquivalent(old, new)
+}
+
+func jsonEquivalent(a, b string) bool {
+	if a == b {
+		return true
+	}
+	var va, vb interface{}
+	if json.Unmarshal([]byte(a), &va) != nil || json.Unmarshal([]byte(b), &vb) != nil {
+		return false
+	}
+	return reflect.DeepEqual(va, vb)
 }
 
 func resourceClientDelete(d *schema.ResourceData, meta interface{}) error {

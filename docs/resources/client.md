@@ -20,6 +20,25 @@ resource "uaa_client" "admin-service-client" {
 }
 ```
 
+The following example creates a client authenticating with `private_key_jwt` (requires UAA >= 77.25.0).
+
+```
+resource "uaa_client" "jwt-client" {
+    client_id = "jwt-client"
+    authorized_grant_types = [ "client_credentials" ]
+
+    client_jwt_config {
+        jwks_uri = "https://my-app.example.com/token_keys"
+
+        jwt_creds {
+            iss = "https://issuer.example.com"
+            sub = "my-workload"
+            aud = "https://uaa.example.com/oauth/token"
+        }
+    }
+}
+```
+
 ## Argument Reference
 
 The following arguments are supported:
@@ -40,6 +59,13 @@ The following arguments are supported:
 * `approvals_deleted` - (Optional) Were the approvals deleted for the client, and an audit event sent.
 * `required_user_groups` - (Optional) A list of group names.
 * `client_secret` - (Required if the client allows authorization_code or client_credentials grant type) A secret string used for authenticating as this client.
+* `client_jwt_config` - (Optional) JWT trust configuration used for `private_key_jwt` client authentication. Supports:
+  * `jwks_uri` - (Optional) URI of the JSON Web Key Set used to validate the client assertion (OIDC standard).
+  * `jwks` - (Optional) JSON Web Key Set as a JSON string, e.g. `jsonencode({ keys = [ ... ] })` (OIDC standard). Each key requires a `kid`.
+  * `jwt_creds` - (Optional) Federated JWT credentials (OAuth2 standard, RFC 7523). Can be repeated, each block supports:
+    * `iss` - (Required) Issuer, matching the `iss` claim of the client assertion.
+    * `sub` - (Required) Subject, matching the `sub` claim of the client assertion.
+    * `aud` - (Optional) Audience of the client assertion. Defaults to the UAA token endpoint.
 
 ## Attributes Reference
 
