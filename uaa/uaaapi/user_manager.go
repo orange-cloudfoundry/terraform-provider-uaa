@@ -103,7 +103,7 @@ func (um *UserManager) loadGroups() (err error) {
 	}
 	userResource := UAAUser{
 		Username: username,
-		Password: "password",
+		Password: "aJ@mqzH3swFSa3D&2Ds!5cz3i5kPzH",
 		Origin:   "uaa",
 		Emails:   []UAAUserEmail{{Value: "email@domain.com"}},
 	}

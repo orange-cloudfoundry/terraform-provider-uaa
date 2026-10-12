@@ -26,20 +26,20 @@ type ClientManager struct {
 type UAAClient struct {
 	ClientID             string           `json:"client_id,omitempty"`
 	ClientSecret         string           `json:"client_secret,omitempty"`
-	AuthorizedGrantTypes []string         `json:"authorized_grant_types,omitempty"`
-	RedirectURI          []string         `json:"redirect_uri,omitempty"`
-	Scope                []string         `json:"scope,omitempty"`
-	ResourceIds          []string         `json:"resource_ids,omitempty"`
-	Authorities          []string         `json:"authorities,omitempty"`
-	Autoapprove          []string         `json:"autoapprove,omitempty"`
+	AuthorizedGrantTypes *[]string        `json:"authorized_grant_types,omitempty"`
+	RedirectURI          *[]string        `json:"redirect_uri,omitempty"`
+	Scope                *[]string        `json:"scope,omitempty"`
+	ResourceIds          *[]string        `json:"resource_ids,omitempty"`
+	Authorities          *[]string        `json:"authorities,omitempty"`
+	Autoapprove          *[]string        `json:"autoapprove,omitempty"`
 	AccessTokenValidity  int              `json:"access_token_validity,omitempty"`
 	RefreshTokenValidity int              `json:"refresh_token_validity,omitempty"`
-	Allowedproviders     []string         `json:"allowedproviders,omitempty"`
+	Allowedproviders     *[]string        `json:"allowedproviders,omitempty"`
 	Name                 string           `json:"name,omitempty"`
 	TokenSalt            string           `json:"token_salt,omitempty"`
 	CreatedWith          string           `json:"createdwith,omitempty"`
 	ApprovalsDeleted     bool             `json:"approvals_deleted,omitempty"`
-	RequiredUserGroups   []string         `json:"required_user_groups,omitempty"`
+	RequiredUserGroups   *[]string        `json:"required_user_groups,omitempty"`
 	LastModified         int64            `json:"lastModified,omitempty"`
 	ClientJwtConfig      *ClientJwtConfig `json:"client_jwt_config,omitempty"`
 }
@@ -107,15 +107,15 @@ type UAAClientResourceList struct {
 }
 
 func (c *UAAClient) HasDefaultScope() bool {
-	return len(c.Scope) == 1 && c.Scope[0] == "uaa.none"
+	return c.Scope != nil && len(*c.Scope) == 1 && (*c.Scope)[0] == "uaa.none"
 }
 
 func (c *UAAClient) HasDefaultAuthorites() bool {
-	return len(c.Authorities) == 1 && c.Authorities[0] == "uaa.none"
+	return c.Authorities != nil && len(*c.Authorities) == 1 && (*c.Authorities)[0] == "uaa.none"
 }
 
 func (c *UAAClient) HasDefaultResourceIds() bool {
-	return len(c.ResourceIds) == 1 && c.ResourceIds[0] == "none"
+	return c.ResourceIds != nil && len(*c.ResourceIds) == 1 && (*c.ResourceIds)[0] == "none"
 }
 
 // NewClientManager -

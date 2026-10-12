@@ -312,22 +312,48 @@ func resourceClientUpdate(d *schema.ResourceData, meta interface{}) error {
 		approval := getChangedValueBool("approvals_deleted", &u, d)
 
 		if u {
-			client := uaaapi.UAAClient{
-				ClientID:             id,
-				AuthorizedGrantTypes: *grants,
-				RedirectURI:          *uris,
-				Scope:                *scope,
-				ResourceIds:          *resources,
-				Authorities:          *authorities,
-				Autoapprove:          *autoapprove,
-				AccessTokenValidity:  *accestok,
-				RefreshTokenValidity: *refreshtok,
-				Allowedproviders:     *providers,
-				Name:                 *name,
-				TokenSalt:            *salt,
-				CreatedWith:          *created,
-				ApprovalsDeleted:     *approval,
-				RequiredUserGroups:   *groups,
+			client := uaaapi.UAAClient{ClientID: id}
+			if grants != nil {
+				client.AuthorizedGrantTypes = grants
+			}
+			if uris != nil {
+				client.RedirectURI = uris
+			}
+			if scope != nil {
+				client.Scope = scope
+			}
+			if resources != nil {
+				client.ResourceIds = resources
+			}
+			if authorities != nil {
+				client.Authorities = authorities
+			}
+			if autoapprove != nil {
+				client.Autoapprove = autoapprove
+			}
+			if accestok != nil {
+				client.AccessTokenValidity = *accestok
+			}
+			if refreshtok != nil {
+				client.RefreshTokenValidity = *refreshtok
+			}
+			if providers != nil {
+				client.Allowedproviders = providers
+			}
+			if name != nil {
+				client.Name = *name
+			}
+			if salt != nil {
+				client.TokenSalt = *salt
+			}
+			if created != nil {
+				client.CreatedWith = *created
+			}
+			if approval != nil {
+				client.ApprovalsDeleted = *approval
+			}
+			if groups != nil {
+				client.RequiredUserGroups = groups
 			}
 			nclient, err := um.UpdateClient(&client)
 			if err != nil {
@@ -507,15 +533,23 @@ func resourceClientDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func toStrings(data interface{}) (res []string) {
-	for _, val := range data.(*schema.Set).List() {
-		res = append(res, val.(string))
+func toStrings(data interface{}) *[]string {
+	list := data.(*schema.Set).List()
+	if len(list) == 0 {
+		return nil
 	}
-	return
+	aa := make([]string, 0, len(list))
+	for _, val := range list {
+		aa = append(aa, val.(string))
+	}
+	return &aa
 }
 
-func toInterface(data []string) (res []interface{}) {
-	for _, val := range data {
+func toInterface(data *[]string) (res []interface{}) {
+	if data == nil {
+		return
+	}
+	for _, val := range *data {
 		res = append(res, val)
 	}
 	return
