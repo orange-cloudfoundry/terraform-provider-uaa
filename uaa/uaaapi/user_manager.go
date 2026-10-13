@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"code.cloudfoundry.org/cli/cf/configuration/coreconfig"
-	cfErrors "code.cloudfoundry.org/cli/cf/errors"
-	"code.cloudfoundry.org/cli/cf/net"
+	"code.cloudfoundry.org/cli/v9/cf/configuration/coreconfig"
+	cfErrors "code.cloudfoundry.org/cli/v9/cf/errors"
+	"code.cloudfoundry.org/cli/v9/cf/net"
 )
 
 // UserManager -
@@ -103,7 +103,7 @@ func (um *UserManager) loadGroups() (err error) {
 	}
 	userResource := UAAUser{
 		Username: username,
-		Password: "password",
+		Password: "aJ@mqzH3swFSa3D&2Ds!5cz3i5kPzH",
 		Origin:   "uaa",
 		Emails:   []UAAUserEmail{{Value: "email@domain.com"}},
 	}

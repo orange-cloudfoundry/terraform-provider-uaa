@@ -8,8 +8,8 @@ import (
 
 	"github.com/kr/pretty"
 
-	"code.cloudfoundry.org/cli/cf/terminal"
-	"code.cloudfoundry.org/cli/cf/trace"
+	"code.cloudfoundry.org/cli/v9/cf/terminal"
+	"code.cloudfoundry.org/cli/v9/cf/trace"
 )
 
 // Logger -
