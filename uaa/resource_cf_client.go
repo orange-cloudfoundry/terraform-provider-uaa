@@ -530,6 +530,7 @@ func resourceClientDelete(d *schema.ResourceData, meta interface{}) error {
 	id := d.Id()
 	um := session.ClientManager()
 	um.DeleteClient(id) //nolint error is authorized here to allow not existing to be deleted without error
+	d.SetId("")
 	return nil
 }
 

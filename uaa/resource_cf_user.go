@@ -217,5 +217,6 @@ func resourceUserDelete(d *schema.ResourceData, meta interface{}) error {
 	um := session.UserManager()
 	um.DeleteUser(id) //nolint error is authorized here to allow not existing to be deleted without error
 
+	d.SetId("")
 	return nil
 }
