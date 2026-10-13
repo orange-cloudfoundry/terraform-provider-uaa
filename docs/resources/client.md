@@ -61,7 +61,7 @@ The following arguments are supported:
 * `client_secret` - (Required if the client allows authorization_code or client_credentials grant type) A secret string used for authenticating as this client.
 * `client_jwt_config` - (Optional) JWT trust configuration used for `private_key_jwt` client authentication. Supports:
   * `jwks_uri` - (Optional) URI of the JSON Web Key Set used to validate the client assertion (OIDC standard).
-  * `jwks` - (Optional) JSON Web Key Set as a JSON string, e.g. `jsonencode({ keys = [ ... ] })` (OIDC standard). Each key requires a `kid`.
+  * `jwks` - (Optional) JSON Web Key Set as a JSON string, e.g. `jsonencode({ keys = [ ... ] })` (OIDC standard).
   * `jwt_creds` - (Optional) Federated JWT credentials (OAuth2 standard, RFC 7523). Can be repeated, each block supports:
     * `iss` - (Required) Issuer, matching the `iss` claim of the client assertion.
     * `sub` - (Required) Subject, matching the `sub` claim of the client assertion.

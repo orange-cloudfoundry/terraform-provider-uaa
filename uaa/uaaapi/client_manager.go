@@ -97,7 +97,6 @@ type ClientJwtChangeRequest struct {
 	Iss        string          `json:"iss,omitempty"`
 	Sub        string          `json:"sub,omitempty"`
 	Aud        string          `json:"aud,omitempty"`
-	Kid        string          `json:"kid,omitempty"`
 	ChangeMode string          `json:"changeMode,omitempty"`
 }
 
